@@ -1,4 +1,7 @@
 package arimaa.core;
+
+import java.util.Objects;
+
 /**
  * Represents a single piece on the Arimaa board with its type and owner.
  */
@@ -49,5 +52,27 @@ public class Piece {
      */
     public Player getOwner() {
         return owner;
+    }
+
+    /**
+     * Creates the string representation of the current piece.
+     * @return The string representation of the current piece
+     */
+    @Override
+    public String toString() {
+        return String.format("%s %s", owner.getColor(), type);
+    }
+
+    /**
+     * Checks whether pieces are the same in terms of owner and type.
+     * @param object The object being compared.
+     * @return Truth value of object comparison.
+     */
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        Piece piece = (Piece) object;
+        return type == piece.type && Objects.equals(owner, piece.owner);
     }
 }
