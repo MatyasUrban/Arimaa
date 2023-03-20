@@ -1,4 +1,8 @@
 package arimaa.core;
+
+import arimaa.utils.Color;
+import arimaa.utils.Direction;
+
 /**
  * The Player class represents a player in the Arimaa game.
  */
@@ -6,6 +10,7 @@ public class Player {
     private final String name;
     private final Color color;
     private final boolean isComputer;
+    private final Direction goalDirection;
 
     /**
      * Constructs a new Player object.
@@ -17,6 +22,12 @@ public class Player {
         this.name = name;
         this.color = color;
         this.isComputer = isComputer;
+        // Set the goal direction based on the player's color
+        if (color == Color.GOLD) {
+            this.goalDirection = Direction.NORTH;
+        } else {
+            this.goalDirection = Direction.SOUTH;
+        }
     }
 
     /**
@@ -36,29 +47,18 @@ public class Player {
     }
 
     /**
+     * Gets the player's goal direction.
+     * @return The goal direction.
+     */
+    public Direction getGoalDirection() {
+        return goalDirection;
+    }
+
+    /**
      * Gets the information whether this player is a computer.
      * @return Truth value whether this player is a computer.
      */
     public boolean isComputer(){
         return isComputer;
-    }
-
-    /**
-     * The Color enum represents the possible colors for a player's pieces.
-     */
-    public enum Color {
-        GOLD("Gold"),
-        SILVER("Silver");
-        private final String displayName;
-
-        Color(String displayName){
-            this.displayName = displayName;
-        }
-
-        @Override
-        public String toString(){
-            return this.displayName;
-        }
-
     }
 }
