@@ -1,29 +1,13 @@
 package arimaa.core;
 
+import arimaa.utils.PieceType;
+
 import java.util.Objects;
 
 /**
  * Represents a single piece on the Arimaa board with its type and owner.
  */
 public class Piece {
-    public enum PieceType{
-        RABBIT("Rabbit"),
-        CAT("Cat"),
-        DOG("Dog"),
-        HORSE("Horse"),
-        CAMEL("Camel"),
-        ELEPHANT("Elephant");
-        private final String displayName;
-
-        PieceType(String displayName){
-            this.displayName = displayName;
-        }
-
-        @Override
-        public String toString(){
-            return this.displayName;
-        }
-    }
 
     private final PieceType type;
     private final Player owner;
