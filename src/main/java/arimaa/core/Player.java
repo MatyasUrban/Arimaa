@@ -7,35 +7,34 @@ import arimaa.utils.Direction;
  * The Player class represents a player in the Arimaa game.
  */
 public class Player {
-    private final String name;
+    private final int playerNumber;
     private final Color color;
     private final boolean isComputer;
     private final Direction goalDirection;
 
     /**
      * Constructs a new Player object.
-     * @param name The name of the player.
-     * @param color The color of the player's pieces.
+     * @param playerNumber The player's number (1-Gold, towards north; 2-Silver, towards south)
      * @param isComputer Boolean indicating whether the player is not human.
      */
-    public Player(String name, Color color, boolean isComputer){
-        this.name = name;
-        this.color = color;
-        this.isComputer = isComputer;
-        // Set the goal direction based on the player's color
-        if (color == Color.GOLD) {
+    public Player(int playerNumber, boolean isComputer){
+        this.playerNumber = playerNumber;
+        if (playerNumber == 1) {
+            this.color = Color.GOLD;
             this.goalDirection = Direction.NORTH;
         } else {
+            this.color = Color.SILVER;
             this.goalDirection = Direction.SOUTH;
         }
+        this.isComputer = isComputer;
     }
 
     /**
-     * Gets the name of the player.
-     * @return The name of the player.
+     * Gets the number of the player.
+     * @return The number of the player.
      */
-    public String getName() {
-        return name;
+    public int getPlayerNumber() {
+        return playerNumber;
     }
 
     /**
