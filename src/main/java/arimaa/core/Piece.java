@@ -75,4 +75,9 @@ public class Piece {
         Piece piece = (Piece) object;
         return type == piece.type && Objects.equals(owner, piece.owner);
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, owner);
+    }
 }
