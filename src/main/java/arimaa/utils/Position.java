@@ -20,6 +20,22 @@ public class Position {
     }
 
     /**
+     * Gets the row number of the position.
+     * @return The row number of the position.
+     */
+    public int getRow() {
+        return row;
+    }
+
+    /**
+     * Gets the column number of the position.
+     * @return The column number of the position.
+     */
+    public int getColumn() {
+        return column;
+    }
+
+    /**
      * Creates a Position object from a string in the format "b1".
      * @param positionString The position string to convert.
      * @return The Position object corresponding to the given string, or null if the string is invalid.

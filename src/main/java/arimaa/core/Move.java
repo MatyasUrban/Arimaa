@@ -1,5 +1,6 @@
 package arimaa.core;
 
+import arimaa.utils.Direction;
 import arimaa.utils.Position;
 
 import java.util.Objects;
@@ -7,7 +8,7 @@ import java.util.Objects;
 /**
  * The Move class represents a move in the Arimaa game.
  */
-public class Move {
+public abstract class Move {
     private final Position from;
     private final Position to;
 
@@ -57,6 +58,39 @@ public class Move {
     @Override
     public int hashCode() {
         return Objects.hash(from, to);
+    }
+
+    /**
+     * Checks if two positions are adjacent on the board.
+     * @param pos1 The first position.
+     * @param pos2 The second position.
+     * @return True if the positions are adjacent, false otherwise.
+     */
+    public static boolean isAdjacent(Position pos1, Position pos2) {
+        int rowDiff = Math.abs(pos1.getRow() - pos2.getRow());
+        int columnDiff = Math.abs(pos1.getColumn() - pos2.getColumn());
+        return (rowDiff == 1 && columnDiff == 0) || (rowDiff == 0 && columnDiff == 1);
+    }
+
+    /**
+     * Returns the direction of the move.
+     * @return The direction of the move.
+     */
+    public Direction getDirection() {
+        int rowDiff = to.getRow() - from.getRow();
+        int columnDiff = to.getColumn() - from.getColumn();
+
+        if (rowDiff == 1 && columnDiff == 0) {
+            return Direction.NORTH;
+        } else if (rowDiff == -1 && columnDiff == 0) {
+            return Direction.SOUTH;
+        } else if (rowDiff == 0 && columnDiff == 1) {
+            return Direction.EAST;
+        } else if (rowDiff == 0 && columnDiff == -1) {
+            return Direction.WEST;
+        }
+
+        return null; // Should not happen for valid moves
     }
 }
 
