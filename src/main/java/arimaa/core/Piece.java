@@ -42,6 +42,7 @@ public class Piece {
         return owner;
     }
 
+
     /**
      * Creates the string representation of the current piece.
      * @return The string representation of the current piece

@@ -28,6 +28,15 @@ public class Position {
     }
 
     /**
+     * Gets the new position after move in designated direction.
+     * @param direction The direction of the move.
+     * @return The position after the move.
+     */
+    public Position move(Direction direction) {
+        return new Position(row + direction.getDRow(), column + direction.getDColumn());
+    }
+
+    /**
      * Gets the column number of the position.
      * @return The column number of the position.
      */
@@ -58,7 +67,21 @@ public class Position {
         return new Position(row, column);
     }
 
-    // Add getters, setters, and other necessary methods here (e.g., equals, hashCode, and toString)
+    /**
+     * Gets the adjacent position in the specified direction.
+     * @param direction The direction to get the adjacent position.
+     * @return The adjacent position in the specified direction, or null if the position is outside the board boundaries.
+     */
+    public Position getAdjacentPosition(Direction direction) {
+        int newRow = this.row + direction.getDRow();
+        int newColumn = this.column + direction.getDColumn();
+
+        if (newRow >= 0 && newRow < 8 && newColumn >= 0 && newColumn < 8) {
+            return new Position(newRow, newColumn);
+        }
+
+        return null;
+    }
 
     @Override
     public boolean equals(Object o) {
