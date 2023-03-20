@@ -19,6 +19,20 @@ public enum Direction {
         this.notation = notation;
     }
 
+    /**
+     * Returns the opposite direction of the current direction.
+     * @return The opposite direction.
+     */
+    public Direction opposite() {
+        return switch (this) {
+            case NORTH -> SOUTH;
+            case EAST -> WEST;
+            case SOUTH -> NORTH;
+            case WEST -> EAST;
+            default -> throw new IllegalStateException("Unexpected value: " + this);
+        };
+    }
+
     public int getDRow() {
         return dRow;
     }
