@@ -182,7 +182,7 @@ public class Board {
 
         // Check if the piece can step onto the new position or push/pull opponent pieces
         if (destinationPiece != null && piece.getType().ordinal() > destinationPiece.getType().ordinal()) {
-            return canPushOrPull(piece, currentPosition, newPosition, destinationPiece);
+            return canPushOrPull(piece, destinationPiece);
         }
 
         // Check if the new position is a trap
