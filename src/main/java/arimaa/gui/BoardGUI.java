@@ -81,6 +81,8 @@ public class BoardGUI {
             frame.setJMenuBar(menuBar);
             ArimaaPanel arimaaPanel = new ArimaaPanel();
             frame.add(arimaaPanel);
+            GameControlsPanel gameControlsPanel = new GameControlsPanel();
+            frame.add(gameControlsPanel, BorderLayout.EAST);
             frame.setResizable(false);
             frame.pack(); // Pack the components of the JFrame
             frame.setVisible(true);
