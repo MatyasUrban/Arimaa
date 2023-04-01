@@ -18,6 +18,7 @@ public class GameControlsPanel extends JPanel {
     private JRadioButton pullButton;
 
     private JButton finishedButton;
+    private JButton resignButton;
 
     public GameControlsPanel() {
         setLayout(new BorderLayout());
@@ -33,18 +34,25 @@ public class GameControlsPanel extends JPanel {
         movesLeft = new JLabel("Arrange your pieces");
 
         stepButton = new JRadioButton("Step");
+        stepButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, stepButton.getMinimumSize().height));
+
         stepButton.setOpaque(true);
         stepButton.setBackground(Color.ORANGE);
         pushButton = new JRadioButton("Push");
+        pushButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, pushButton.getMinimumSize().height));
+
         pushButton.setOpaque(true);
         pushButton.setBackground(Color.MAGENTA);
         pullButton = new JRadioButton("Pull");
+        pullButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, pullButton.getMinimumSize().height));
+
         pullButton.setOpaque(true);
         pullButton.setBackground(Color.RED);
 
-        stepButton.setVisible(false);
-        pushButton.setVisible(false);
-        pullButton.setVisible(false);
+        stepButton.setVisible(true);
+        pushButton.setVisible(true);
+        pullButton.setVisible(true);
+        stepButton.setSelected(true);
 
 
         actionTypeGroup = new ButtonGroup();
@@ -53,9 +61,14 @@ public class GameControlsPanel extends JPanel {
         actionTypeGroup.add(pullButton);
 
         finishedButton = new JButton("Finished");
+        finishedButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, finishedButton.getMinimumSize().height));
+        resignButton = new JButton("Resign");
+        resignButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, resignButton.getMinimumSize().height));
+
 
 
         JPanel group1 = createGroupPanel(Color.BLACK);
+        group1.add(Box.createRigidArea(new Dimension(0, 7)));
         group1.add(player1Name);
         group1.add(Box.createRigidArea(new Dimension(0, 5)));
         group1.add(player1Time);
@@ -64,6 +77,7 @@ public class GameControlsPanel extends JPanel {
         group2.add(player2Name);
         group2.add(Box.createRigidArea(new Dimension(0, 5)));
         group2.add(player2Time);
+        group2.add(Box.createRigidArea(new Dimension(0, 27)));
 
         JPanel radioButtonsPanel = new JPanel();
         radioButtonsPanel.setOpaque(false);
@@ -85,6 +99,8 @@ public class GameControlsPanel extends JPanel {
         group3.add(radioButtonsPanel);
         group3.add(Box.createRigidArea(new Dimension(0, 5)));
         group3.add(finishedButton);
+        group3.add(Box.createRigidArea(new Dimension(0, 5)));
+        group3.add(resignButton);
         group3.add(Box.createVerticalGlue());
 
         add(group1, BorderLayout.NORTH);

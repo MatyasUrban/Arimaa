@@ -4,23 +4,19 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
-import java.util.Objects;
 
-class ArimaaPanel extends JPanel {
+class BoardPanel extends JPanel {
     private final int gridSize = 8;
     private final int tileSize = 70;
 
     private JPanel[][] squares = new JPanel[gridSize][gridSize];
 
 
-    public ArimaaPanel() {
+    public BoardPanel() {
         createBoard();
         int boardWidth = gridSize * tileSize; // Calculate the total width based on the tile size
         int boardHeight = gridSize * tileSize; // Calculate the total height based on the tile size
@@ -34,66 +30,6 @@ class ArimaaPanel extends JPanel {
             private JPanel previousSquare = null;
             private JLabel selectedSquare = null;
 
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                JPanel square = (JPanel) e.getSource();
-                int row = -1;
-                int col = -1;
-
-                // Find the clicked square in the squares array
-                for (int i = 0; i < gridSize; i++) {
-                    for (int j = 0; j < gridSize; j++) {
-                        if (squares[i][j] == square) {
-                            row = i;
-                            col = j;
-                            break;
-                        }
-                    }
-                }
-
-                if (previousSquare == square) { // Clicked twice on the same square
-                    resetBoardColors();
-                    previousSquare = null;
-                    selectedSquare = null;
-                } else {
-                    if (previousSquare != null && square.getBackground() == Color.WHITE && square.getComponentCount() == 0) {
-                        // Move piece to the new square
-                        previousSquare.remove(selectedSquare);
-                        square.add(selectedSquare);
-                        square.revalidate();
-                        square.repaint();
-
-                        // Reset the board colors and clear the selected piece
-                        resetBoardColors();
-                        previousSquare = null;
-                        selectedSquare = null;
-                    } else {
-                        resetBoardColors();
-
-                        // Set the current square to light red
-                        square.setBackground(Color.PINK);
-
-                        // Set horizontal and vertical squares to white
-                        for (int i = 0; i < gridSize; i++) {
-                            if (i != row) {
-                                squares[i][col].setBackground(Color.WHITE);
-                            }
-                            if (i != col) {
-                                squares[row][i].setBackground(Color.WHITE);
-                            }
-                        }
-
-                        // Update the selected piece
-                        if (square.getComponentCount() > 0) {
-                            selectedSquare = (JLabel) square.getComponent(0);
-                        } else {
-                            selectedSquare = null;
-                        }
-
-                        previousSquare = square;
-                    }
-                }
-            }
 
             private void resetBoardColors() {
                 for (int i = 0; i < gridSize; i++) {

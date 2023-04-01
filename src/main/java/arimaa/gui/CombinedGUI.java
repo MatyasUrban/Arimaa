@@ -3,7 +3,7 @@ package arimaa.gui;
 import javax.swing.*;
 import java.awt.*;
 
-public class BoardGUI {
+public class CombinedGUI {
 
 
     private static void showMultiplayerDialog(JFrame parentFrame) {
@@ -79,10 +79,9 @@ public class BoardGUI {
 
             // Set the menu bar for the JFrame
             frame.setJMenuBar(menuBar);
-            ArimaaPanel arimaaPanel = new ArimaaPanel();
-            frame.add(arimaaPanel);
+            frame.add(new LabeledBoardPanel());
             GameControlsPanel gameControlsPanel = new GameControlsPanel();
-            frame.add(gameControlsPanel, BorderLayout.EAST);
+            frame.add(new WelcomePanel(), BorderLayout.EAST);
             frame.setResizable(false);
             frame.pack(); // Pack the components of the JFrame
             frame.setVisible(true);
