@@ -8,7 +8,7 @@ import java.util.Objects;
 /**
  * The Move class represents a move in the Arimaa game.
  */
-public abstract class Move {
+public class Move {
     private final Position from;
     private final Position to;
 

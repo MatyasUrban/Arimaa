@@ -4,10 +4,11 @@ package arimaa.utils;
  * The Direction enum represents the four possible directions a piece can move in Arimaa.
  */
 public enum Direction {
-    NORTH(0, 1, "n"),
-    SOUTH(0, -1, "s"),
-    EAST(1, 0, "e"),
-    WEST(-1, 0, "w");
+    NORTH(-1, 0, "n"),
+    SOUTH(1, 0, "s"),
+    EAST(0, 1, "e"),
+    WEST(0, -1, "w"),
+    NONE(0, 0, "x");
 
     private final int dRow;
     private final int dColumn;
@@ -29,6 +30,7 @@ public enum Direction {
             case EAST -> WEST;
             case SOUTH -> NORTH;
             case WEST -> EAST;
+            case NONE -> NONE;
             default -> throw new IllegalStateException("Unexpected value: " + this);
         };
     }
