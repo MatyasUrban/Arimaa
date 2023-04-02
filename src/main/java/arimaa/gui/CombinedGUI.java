@@ -4,7 +4,10 @@ import arimaa.utils.GameValidator;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 
 public class CombinedGUI {
 
@@ -133,13 +136,37 @@ public class CombinedGUI {
                 File selectedFile = fileChooser.getSelectedFile();
 
                 if (isValidArimaaFile(selectedFile)) {
-                    changeRightPanel(new HistoryPanel());
+                    // Read the file content starting from the 9th line
+                    StringBuilder content = new StringBuilder();
+                    try (BufferedReader br = new BufferedReader(new FileReader(selectedFile))) {
+                        String line;
+                        int lineNumber = 0;
+
+                        while ((line = br.readLine()) != null) {
+                            lineNumber++;
+                            if (lineNumber > 7) {
+                                content.append(line).append("\n");
+                            }
+                        }
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+
+                    // Pass the content to the HistoryPanel
+                    labeledBoardPanel.emptyTheBoard();
+                    changeRightPanel(new HistoryPanel(content.toString(), labeledBoardPanel));
+                    SwingUtilities.invokeLater(() -> { // Add these lines
+                        frame.revalidate();
+                        frame.repaint();
+                    });
                 } else {
                     JOptionPane.showMessageDialog(frame, "This file is not a valid Arimaa game.", "Invalid file", JOptionPane.WARNING_MESSAGE);
                     changeRightPanel(new WelcomePanel());
+                    labeledBoardPanel.resetBoardToDefault();
                 }
             }
         });
+
     }
 
     private static boolean isValidArimaaFile(File file) {

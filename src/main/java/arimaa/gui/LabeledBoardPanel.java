@@ -1,5 +1,8 @@
 package arimaa.gui;
 
+import arimaa.core.Move;
+import arimaa.utils.Position;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -64,4 +67,21 @@ class LabeledBoardPanel extends JPanel {
     public void resetBoardToDefault(){
         boardPanel.resetBoardToDefault();
     }
+
+    public void emptyTheBoard() {
+        boardPanel.emptyTheBoard();
+    }
+
+    public void placePieceAt(String piece, Position position){
+        boardPanel.placePieceAt(piece, position);
+    }
+
+    public void removePieceAt(Position position){
+        boardPanel.removePieceAt(position);
+    }
+
+    public void movePiece(Move move){
+        boardPanel.movePiece(move);
+    }
+
 }

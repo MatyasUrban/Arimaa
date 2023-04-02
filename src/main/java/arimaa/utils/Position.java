@@ -53,18 +53,32 @@ public class Position {
         if (positionString.length() != 2) {
             return null;
         }
-
-        char columnChar = positionString.charAt(0);
         char rowChar = positionString.charAt(1);
+        char columnChar = positionString.charAt(0);
+        int rowInt = switch (rowChar){
+            case '1' -> 7;
+            case '2' -> 6;
+            case '3' -> 5;
+            case '4' -> 4;
+            case '5' -> 3;
+            case '6' -> 2;
+            case '7' -> 1;
+            case '8' -> 0;
+            default -> 0;
+        };
+        int columnInt = switch (columnChar){
+            case 'a' -> 0;
+            case 'b' -> 1;
+            case 'c' -> 2;
+            case 'd' -> 3;
+            case 'e' -> 4;
+            case 'f' -> 5;
+            case 'g' -> 6;
+            case 'h' -> 7;
+            default -> 0;
+        };
 
-        if (columnChar < 'a' || columnChar > 'h' || rowChar < '1' || rowChar > '8') {
-            return null;
-        }
-
-        int column = columnChar - 'a';
-        int row = rowChar - '1';
-
-        return new Position(row, column);
+        return new Position(rowInt, columnInt);
     }
 
     /**

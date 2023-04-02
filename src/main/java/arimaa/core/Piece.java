@@ -26,6 +26,12 @@ public class Piece {
         this.owner = owner;
     }
 
+    public Piece(String s){
+        this.type = PieceType.fromNotation(s.charAt(0));
+        int playerNumber = Character.isUpperCase(s.charAt(0)) ? 1 : 2;
+        this.owner = new Player(playerNumber, false);
+    }
+
     /**
      * Returns the type of the piece.
      * @return The type of the piece (RABBIT, CAT, DOG, HORSE, CAMEL, ELEPHANT).
@@ -49,7 +55,12 @@ public class Piece {
      */
     @Override
     public String toString() {
-        return String.format("%s %s", owner.getColor(), type);
+        String pieceString = getType().toString();
+        if (Objects.equals(getOwner().getColor().toString(), "GOLD")) {
+            pieceString.toUpperCase();
+        }
+        return pieceString;
+
     }
 
     /**
