@@ -1,6 +1,8 @@
 package arimaa.gui;
 
 import arimaa.core.Move;
+import arimaa.core.Piece;
+import arimaa.core.StepMove;
 import arimaa.utils.Position;
 
 import javax.swing.*;
@@ -72,7 +74,7 @@ class LabeledBoardPanel extends JPanel {
         boardPanel.emptyTheBoard();
     }
 
-    public void placePieceAt(String piece, Position position){
+    public void placePieceAt(Piece piece, Position position){
         boardPanel.placePieceAt(piece, position);
     }
 
@@ -80,8 +82,8 @@ class LabeledBoardPanel extends JPanel {
         boardPanel.removePieceAt(position);
     }
 
-    public void movePiece(Move move){
-        boardPanel.movePiece(move);
+    public void movePiece(StepMove stepMove){
+        boardPanel.movePiece(stepMove);
     }
 
 }

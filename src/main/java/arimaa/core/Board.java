@@ -10,8 +10,12 @@ import arimaa.utils.Position;
  * checking for valid moves, and determining win/lose conditions.
  */
 public class Board {
-    public static final int BOARD_SIZE = 8;
+    private final int BOARD_SIZE = 8;
     private final Piece[][] board;
+
+    public int getBOARD_SIZE() {
+        return BOARD_SIZE;
+    }
 
     /**
      * Constructs a new, empty Board object.
@@ -115,6 +119,15 @@ public class Board {
         makeStepMove(pushedPieceMove);
         makeStepMove(pieceMove);
     }
+
+    public void emptyBoard() {
+        for (int row = 0; row < BOARD_SIZE; row++) {
+            for (int col = 0; col < BOARD_SIZE; col++) {
+                board[row][col] = null;
+            }
+        }
+    }
+
 
 
 }

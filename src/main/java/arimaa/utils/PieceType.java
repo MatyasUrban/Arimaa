@@ -1,16 +1,19 @@
 package arimaa.utils;
 
 public enum PieceType{
-    RABBIT('r'),
-    CAT('c'),
-    DOG('d'),
-    HORSE('h'),
-    CAMEL('m'),
-    ELEPHANT('e');
+    RABBIT('r', "rabbit"),
+    CAT('c', "cat"),
+    DOG('d', "dog"),
+    HORSE('h', "horse"),
+    CAMEL('m', "camel"),
+    ELEPHANT('e', "elephant");
     private final char notation;
 
-    PieceType(char notation) {
+    private final String name;
+
+    PieceType(char notation, String name) {
         this.notation = notation;
+        this.name = name;
     }
 
     public boolean isStrongerThan(PieceType otherType) {
@@ -28,6 +31,10 @@ public enum PieceType{
 
     public char getNotation(){
         return notation;
+    }
+
+    public String getName() {
+        return name;
     }
 
     @Override

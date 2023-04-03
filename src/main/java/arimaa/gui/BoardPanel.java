@@ -3,6 +3,7 @@ package arimaa.gui;
 import arimaa.core.Board;
 import arimaa.core.Move;
 import arimaa.core.Piece;
+import arimaa.core.StepMove;
 import arimaa.utils.Position;
 
 import javax.imageio.ImageIO;
@@ -11,9 +12,12 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Objects;
 
 class BoardPanel extends JPanel {
-    private final int gridSize = 8;
+
+    private Board board = new Board();
+    private final int gridSize = board.getBOARD_SIZE();
     private final int tileSize = 70;
 
     private JPanel[][] squares = new JPanel[gridSize][gridSize];
@@ -29,19 +33,10 @@ class BoardPanel extends JPanel {
             {"R", "R", "R", "R", "R", "R", "R", "R"}
     };
 
-    private static final String[][] emptyBoard = {
-        {"", "", "", "", "", "", "", ""},
-        {"", "", "", "", "", "", "", ""},
-        {"", "", "", "", "", "", "", ""},
-        {"", "", "", "", "", "", "", ""},
-        {"", "", "", "", "", "", "", ""},
-        {"", "", "", "", "", "", "", ""},
-        {"", "", "", "", "", "", "", ""},
-        {"", "", "", "", "", "", "", ""}
-    };
-
 
     private String[][] instanceBoard = new String[8][8];
+
+
 
     public BoardPanel() {
         setLayout(new GridLayout(gridSize, gridSize));
@@ -112,6 +107,35 @@ class BoardPanel extends JPanel {
         square.repaint();
     }
 
+    private void fillSquaresWithBoard(){
+        for (int i = 0; i < gridSize * gridSize; i++) {
+            int row = i / gridSize;
+            int col = i % gridSize;
+            Position position = new Position(row, col);
+            Piece piece = board.getPieceAt(position);
+            JPanel square = squares[row][col];
+            fillPositionWithPiece(piece, square);
+        }
+    }
+
+    private void fillPositionWithPiece(Piece piece, JPanel square){
+        square.removeAll();
+        if (piece != null){
+            String pieceName = piece.getType().getName();
+            char ownerChar = piece.getOwner().getColor().getBigChar();
+            String photoName = pieceName + "-" + ownerChar;
+            ImageIcon pieceIcon = loadImageIcon("piece-icons/" + photoName + ".png");
+            if (pieceIcon != null) {
+                JLabel pieceLabel = new JLabel(pieceIcon);
+                square.add(pieceLabel);
+            } else {
+                System.err.println("Failed to load image resource: piece-icons/" + piece + ".png");
+            }
+        }
+        square.revalidate();
+        square.repaint();
+    }
+
     private ImageIcon loadImageIcon(String path) {
         ImageIcon icon = null;
 
@@ -138,25 +162,20 @@ class BoardPanel extends JPanel {
         instanceBoard[row][col] = piece;
     }
 
-    public void placePieceAt(String piece, Position position) {
-        int row = position.getRow();
-        int col = position.getColumn();
-        updatePieceInstanceBoard(piece, row, col);
-        JPanel square = squares[row][col];
-        fillSquareWithPiece(square, piece);
+    public void placePieceAt(Piece piece, Position position) {
+        board.placePiece(piece, position);
+        fillSquaresWithBoard();
     }
 
 
     public void removePieceAt(Position position){
-        placePieceAt("", position);
+        board.removePieceAt(position);
+        fillSquaresWithBoard();
     }
 
-    public void movePiece(Move move){
-        int fromRow = move.getFrom().getRow();
-        int fromCol = move.getFrom().getColumn();
-        String piece = instanceBoard[fromRow][fromCol];
-        removePieceAt(move.getFrom());
-        placePieceAt(piece, move.getTo());
+    public void movePiece(StepMove stepMove){
+        board.makeMove(stepMove);
+        fillSquaresWithBoard();
     }
 
     private void resetBoardColors() {
@@ -176,20 +195,20 @@ class BoardPanel extends JPanel {
 
 
     public void resetBoardToDefault() {
-        updateEntireInstanceBoard(defaultBoard);
-        fillBoardWithPieces(defaultBoard);
-        repaint();
+        for (int i = 0; i < gridSize; i++) {
+            for (int j = 0; j < gridSize; j++) {
+                Position position = new Position(i, j);
+                String pieceString = BoardPanel.defaultBoard[i][j];
+                Piece piece = Piece.fromNotation(pieceString);
+                board.placePiece(piece, position);
+            }
+        }
+        fillSquaresWithBoard();
     }
 
     public void emptyTheBoard(){
-        resetBoardColors();
-        updateEntireInstanceBoard(emptyBoard);
-        for (int i = 0; i < gridSize * gridSize; i++) {
-            int row = i / gridSize;
-            int col = i % gridSize;
-            JPanel square = squares[row][col];
-            removePieceAt(new Position(row, col));
-        }
+        board.emptyBoard();
+        fillSquaresWithBoard();
     }
 
 

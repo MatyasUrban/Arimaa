@@ -112,8 +112,28 @@ public class Position {
 
     @Override
     public String toString() {
-        char columnChar = (char) ('a' + column);
-        char rowChar = (char) ('1' + row);
+        char rowChar = switch (getRow()){
+            case 0 -> '8';
+            case 1 -> '7';
+            case 2 -> '6';
+            case 3 -> '5';
+            case 4 -> '4';
+            case 5 -> '3';
+            case 6 -> '2';
+            case 7 -> '1';
+            default -> '1';
+        };
+        char columnChar = switch (getColumn()) {
+            case 0 -> 'a';
+            case 1 -> 'b';
+            case 2 -> 'c';
+            case 3 -> 'd';
+            case 4 -> 'e';
+            case 5 -> 'f';
+            case 6 -> 'g';
+            case 7 -> 'h';
+            default -> 'a';
+        };
         return String.valueOf(columnChar) + rowChar;
     }
 }

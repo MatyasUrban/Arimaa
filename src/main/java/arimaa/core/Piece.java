@@ -26,10 +26,14 @@ public class Piece {
         this.owner = owner;
     }
 
-    public Piece(String s){
-        this.type = PieceType.fromNotation(s.charAt(0));
+    public static Piece fromNotation(String s){
+        if (Objects.equals(s, "")){
+            return null;
+        }
+        PieceType pieceType = PieceType.fromNotation(s.toLowerCase().charAt(0));
         int playerNumber = Character.isUpperCase(s.charAt(0)) ? 1 : 2;
-        this.owner = new Player(playerNumber, false);
+        Player player = new Player(playerNumber, false);
+        return new Piece(pieceType, player);
     }
 
     /**
