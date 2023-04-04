@@ -1,5 +1,7 @@
 package arimaa.gui;
 
+import arimaa.core.Game;
+import arimaa.core.Player;
 import arimaa.utils.GameValidator;
 
 import javax.swing.*;
@@ -15,6 +17,17 @@ public class CombinedGUI {
     private static LabeledBoardPanel labeledBoardPanel;
     private static JPanel currentPanel;
 
+    private static final String[][] DEFAULT_BOARD = {
+            {"r", "r", "r", "r", "r", "r", "r", "r"},
+            {"e", "m", "h", "h", "d", "d", "c", "c"},
+            {"", "", "", "", "", "", "", ""},
+            {"", "", "", "", "", "", "", ""},
+            {"", "", "", "", "", "", "", ""},
+            {"", "", "", "", "", "", "", ""},
+            {"E", "M", "H", "H", "D", "D", "C", "C"},
+            {"R", "R", "R", "R", "R", "R", "R", "R"}
+    };
+
     public static void changeRightPanel(JPanel newPanel) {
         frame.remove(currentPanel);
         frame.add(newPanel, BorderLayout.EAST);
@@ -22,6 +35,7 @@ public class CombinedGUI {
         frame.pack();
         frame.repaint();
     }
+
 
 
     private static void showMultiplayerDialog(JFrame parentFrame) {
@@ -40,9 +54,13 @@ public class CombinedGUI {
             // Your code to start a new multiplayer game with the entered names
             String player1Name = player1TextField.getText().replaceAll("\\s", ""); // Remove spaces
             String player2Name = player2TextField.getText().replaceAll("\\s", ""); // Remove spaces
-
-            // Close the dialog
             multiplayerDialog.dispose();
+            Player player1 = new Player(1, false, player1Name);
+            Player player2 = new Player(2, false, player2Name);
+            Game game = new Game(player1, player2);
+            game.getBoard().initializeBoardFrom2DString(DEFAULT_BOARD, player1, player2);
+            labeledBoardPanel.setBoard(game.getBoard());
+            changeRightPanel(new GameControlsPanel(game, labeledBoardPanel));
         });
 
         // Add components to the dialog using GridBagConstraints
@@ -87,7 +105,7 @@ public class CombinedGUI {
         JMenuItem multiplayerItem = new JMenuItem("Multiplayer");
         multiplayerItem.addActionListener(e -> {
             showMultiplayerDialog(frame);
-        });;
+        });
         JMenuItem singleplayerItem = new JMenuItem("Singleplayer");
         newGameMenu.add(multiplayerItem);
         newGameMenu.add(singleplayerItem);
@@ -103,7 +121,7 @@ public class CombinedGUI {
 
         // Set the menu bar for the JFrame
         frame.setJMenuBar(menuBar);
-        labeledBoardPanel = new LabeledBoardPanel();
+        labeledBoardPanel = new LabeledBoardPanel(new Game().getBoard());
         frame.add(labeledBoardPanel, BorderLayout.CENTER);
 
         WelcomePanel welcomePanel = new WelcomePanel();
@@ -119,13 +137,13 @@ public class CombinedGUI {
         singleplayerItem.addActionListener(e -> {
             // Add your singleplayer game logic here
             // For now, just changing the right panel to GameControlsPanel
-            changeRightPanel(new GameControlsPanel());
+            changeRightPanel(new GameControlsPanel(new Game(), labeledBoardPanel));
         });
 
         continuePlayingItem.addActionListener(e -> {
             // Add your continue playing game logic here
             // For now, just changing the right panel to GameControlsPanel
-            changeRightPanel(new GameControlsPanel());
+            changeRightPanel(new GameControlsPanel(new Game(), labeledBoardPanel));
         });
 
         viewStepsItem.addActionListener(e -> {
@@ -153,16 +171,11 @@ public class CombinedGUI {
                     }
 
                     // Pass the content to the HistoryPanel
-                    labeledBoardPanel.emptyTheBoard();
+                    labeledBoardPanel.setBoard(new Game().getBoard());
                     changeRightPanel(new HistoryPanel(content.toString(), labeledBoardPanel));
-                    SwingUtilities.invokeLater(() -> { // Add these lines
-                        frame.revalidate();
-                        frame.repaint();
-                    });
                 } else {
                     JOptionPane.showMessageDialog(frame, "This file is not a valid Arimaa game.", "Invalid file", JOptionPane.WARNING_MESSAGE);
                     changeRightPanel(new WelcomePanel());
-                    labeledBoardPanel.resetBoardToDefault();
                 }
             }
         });

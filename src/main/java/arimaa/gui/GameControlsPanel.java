@@ -1,15 +1,17 @@
 package arimaa.gui;
 
+import arimaa.core.Game;
+
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 public class GameControlsPanel extends JPanel {
 
-    private JLabel player1Name;
-    private JLabel player1Time;
-    private JLabel player2Name;
-    private JLabel player2Time;
+    private JLabel playerTopName;
+    private JLabel playerTopTime;
+    private JLabel playerBottomName;
+    private JLabel playerBottomTime;
     private JLabel turnIndicator;
     private JLabel movesLeft;
     private ButtonGroup actionTypeGroup;
@@ -20,14 +22,20 @@ public class GameControlsPanel extends JPanel {
     private JButton finishedButton;
     private JButton resignButton;
 
-    public GameControlsPanel() {
+    private final Game game;
+
+    private final LabeledBoardPanel labeledBoardPanel;
+
+    public GameControlsPanel(Game game, LabeledBoardPanel labeledBoardPanel) {
+        this.game = game;
+        this.labeledBoardPanel = labeledBoardPanel;
         setLayout(new BorderLayout());
         setBorder(new EmptyBorder(0, 0, 0, 0));
 
-        player1Name = createColoredLabel("Player 1 (name)", Color.CYAN, 14);
-        player1Time = createColoredLabel("00:00:00", Color.CYAN, 18, true);
-        player2Name = createColoredLabel("Player 2 (name)", Color.YELLOW, 14);
-        player2Time = createColoredLabel("00:00:00", Color.YELLOW, 18, true);
+        playerTopName = createColoredLabel("Player 2 (" + game.getPlayer2().getPlayerName() + ")", Color.CYAN, 14);
+        playerTopTime = createColoredLabel("00:00:00", Color.CYAN, 18, true);
+        playerBottomName = createColoredLabel("Player 1 (" + game.getPlayer1().getPlayerName() + ")", Color.YELLOW, 14);
+        playerBottomTime = createColoredLabel("00:00:00", Color.YELLOW, 18, true);
 
         turnIndicator = new JLabel("Player 1's Turn");
         turnIndicator.setForeground(Color.BLACK);
@@ -69,14 +77,14 @@ public class GameControlsPanel extends JPanel {
 
         JPanel group1 = createGroupPanel(Color.BLACK);
         group1.add(Box.createRigidArea(new Dimension(0, 7)));
-        group1.add(player1Name);
+        group1.add(playerTopName);
         group1.add(Box.createRigidArea(new Dimension(0, 5)));
-        group1.add(player1Time);
+        group1.add(playerTopTime);
 
         JPanel group2 = createGroupPanel(Color.BLACK);
-        group2.add(player2Name);
+        group2.add(playerBottomName);
         group2.add(Box.createRigidArea(new Dimension(0, 5)));
-        group2.add(player2Time);
+        group2.add(playerBottomTime);
         group2.add(Box.createRigidArea(new Dimension(0, 27)));
 
         JPanel radioButtonsPanel = new JPanel();
@@ -87,8 +95,13 @@ public class GameControlsPanel extends JPanel {
         radioButtonsPanel.add(pushButton);
         radioButtonsPanel.add(Box.createRigidArea(new Dimension(0, 5)));
         radioButtonsPanel.add(pullButton);
-
-        JPanel group3 = createGroupPanel(Color.YELLOW);
+        Color turnColor;
+        if (game.getGamePhase() % 2 == 1){
+            turnColor = Color.YELLOW;
+        } else {
+            turnColor = Color.CYAN;
+        }
+        JPanel group3 = createGroupPanel(turnColor);
         group3.setLayout(new BoxLayout(group3, BoxLayout.Y_AXIS));
 
         group3.add(Box.createVerticalGlue());
@@ -102,10 +115,22 @@ public class GameControlsPanel extends JPanel {
         group3.add(Box.createRigidArea(new Dimension(0, 5)));
         group3.add(resignButton);
         group3.add(Box.createVerticalGlue());
+        if (game.getGamePhase() < 3){
+            radioButtonsPanel.setVisible(false);
+            resignButton.setVisible(false);
+        }
 
         add(group1, BorderLayout.NORTH);
         add(group3, BorderLayout.CENTER);
         add(group2, BorderLayout.SOUTH);
+        finishedButton.addActionListener(e -> {
+
+        });
+        while (!game.getGameEnded()){
+            if (game.getGamePhase() == 1){
+                labeledBoardPanel.fillSquaresWithColor(game.getBoard().getPositionsOfPlayersPieces(game.getCurrentPlayer()), Color.white);
+            }
+        }
     }
 
 

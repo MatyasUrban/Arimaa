@@ -1,16 +1,55 @@
 package arimaa.core;
 
+import arimaa.utils.Position;
+
 public class Game {
     private final Board board;
     private final Player player1;
     private final Player player2;
     private Player currentPlayer;
+    private Boolean gameEnded;
+    private int gamePhase;
 
     public Game(Player player1, Player player2) {
         this.board = new Board();
         this.player1 = player1;
         this.player2 = player2;
         this.currentPlayer = player1;
+        this.gameEnded = false;
+        this.gamePhase = 1;
+    }
+
+    public Game(){
+        this.board = new Board();
+        this.player1 = new Player(1, false);
+        this.player2 = new Player(2, false);
+        this.currentPlayer = player1;
+        this.gameEnded = false;
+        this.gamePhase = 1;
+    }
+
+    public Board getBoard() {
+        return board;
+    }
+
+    public Player getPlayer1() {
+        return player1;
+    }
+
+    public Player getPlayer2() {
+        return player2;
+    }
+
+    public Player getCurrentPlayer() {
+        return currentPlayer;
+    }
+
+    public Boolean getGameEnded() {
+        return gameEnded;
+    }
+
+    public int getGamePhase() {
+        return gamePhase;
     }
 
     public void startGame() {
@@ -49,5 +88,7 @@ public class Game {
         // generate a valid move. Be sure to validate the move with board.isValidMove(move)
         // before executing it with board.makeMove(move).
     }
+
+
 }
 

@@ -11,6 +11,7 @@ public class Player {
     private final Color color;
     private final boolean isComputer;
     private final Direction goalDirection;
+    private final String playerName;
 
     /**
      * Constructs a new Player object.
@@ -27,6 +28,20 @@ public class Player {
             this.goalDirection = Direction.SOUTH;
         }
         this.isComputer = isComputer;
+        this.playerName = "";
+    }
+
+    public Player(int playerNumber, boolean isComputer, String playerName){
+        this.playerNumber = playerNumber;
+        if (playerNumber == 1) {
+            this.color = Color.GOLD;
+            this.goalDirection = Direction.NORTH;
+        } else {
+            this.color = Color.SILVER;
+            this.goalDirection = Direction.SOUTH;
+        }
+        this.isComputer = isComputer;
+        this.playerName = playerName;
     }
 
     /**
@@ -35,6 +50,10 @@ public class Player {
      */
     public int getPlayerNumber() {
         return playerNumber;
+    }
+
+    public String getPlayerName(){
+        return playerName;
     }
 
     /**

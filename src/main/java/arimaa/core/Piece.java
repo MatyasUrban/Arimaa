@@ -26,6 +26,7 @@ public class Piece {
         this.owner = owner;
     }
 
+    // general piece, not associated with a specific player
     public static Piece fromNotation(String s){
         if (Objects.equals(s, "")){
             return null;
@@ -33,6 +34,14 @@ public class Piece {
         PieceType pieceType = PieceType.fromNotation(s.toLowerCase().charAt(0));
         int playerNumber = Character.isUpperCase(s.charAt(0)) ? 1 : 2;
         Player player = new Player(playerNumber, false);
+        return new Piece(pieceType, player);
+    }
+
+    public static Piece fromNotationPlayerSpecific(String pieceTypeString, Player player){
+        if (Objects.equals(pieceTypeString, "")){
+            return null;
+        }
+        PieceType pieceType = PieceType.fromNotation(pieceTypeString.toLowerCase().charAt(0));
         return new Piece(pieceType, player);
     }
 

@@ -1,8 +1,12 @@
 package arimaa.core;
 
+import arimaa.utils.Color;
 import arimaa.utils.Direction;
 import arimaa.utils.PieceType;
 import arimaa.utils.Position;
+
+import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * The Board class represents the Arimaa game board.
@@ -126,6 +130,58 @@ public class Board {
                 board[row][col] = null;
             }
         }
+    }
+
+    public Boolean hasPlayerWon(Player player){
+        // check if player has a rabbit in the goal row
+        for (int i = 0; i < BOARD_SIZE; i++){
+            Piece piece;
+            if (player.getColor() == Color.GOLD){
+                piece = getPieceAt(new Position(0, i));
+            } else {
+                piece = getPieceAt(new Position(7, i));
+            }
+            if (piece.getOwner() == player && piece.getType() == PieceType.RABBIT){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void initializeBoardFrom2DString(String[][] board2DString, Player player1, Player player2){
+        for (int i = 0; i < getBOARD_SIZE(); i++){
+            for (int j = 0; j < getBOARD_SIZE(); j++){
+                Position position = new Position(i, j);
+                String stringPiece = board2DString[i][j];
+                if (Objects.equals(stringPiece, "")){
+                    continue;
+                };
+                Player player = Character.isUpperCase(stringPiece.charAt(0)) ? player1 : player2;
+                Piece piece = Piece.fromNotationPlayerSpecific(stringPiece, player);
+                placePiece(piece, position);
+            }
+        }
+    }
+
+    public void switchPieces(Position position1, Position position2){
+        Piece firstPiece = getPieceAt(position1);
+        Piece secondPiece = getPieceAt(position2);
+        placePiece(firstPiece, position2);
+        placePiece(secondPiece, position1);
+    }
+
+    public Position[] getPositionsOfPlayersPieces(Player player){
+        ArrayList<Position> positionsArrayList = new ArrayList<>();
+        for (int i = 0; i < getBOARD_SIZE(); i++){
+            for (int j = 0; j < getBOARD_SIZE(); j++){
+                Position position = new Position(i, j);
+                Piece piece = getPieceAt(position);
+                if (piece.getOwner() == player){
+                    positionsArrayList.add(position);
+                }
+            }
+        }
+        return (Position[]) positionsArrayList.toArray();
     }
 
 

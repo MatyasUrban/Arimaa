@@ -1,5 +1,6 @@
 package arimaa.gui;
 
+import arimaa.core.Board;
 import arimaa.core.Move;
 import arimaa.core.Piece;
 import arimaa.core.StepMove;
@@ -12,10 +13,10 @@ class LabeledBoardPanel extends JPanel {
 
     private BoardPanel boardPanel;
 
-    public LabeledBoardPanel() {
+    public LabeledBoardPanel(Board board) {
         setLayout(new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
-        boardPanel = new BoardPanel();
+        boardPanel = new BoardPanel(board);
 
         constraints.gridx = 1;
         constraints.gridy = 0;
@@ -66,8 +67,13 @@ class LabeledBoardPanel extends JPanel {
         return columnLabelsPanel;
     }
 
-    public void resetBoardToDefault(){
-        boardPanel.resetBoardToDefault();
+//    public void resetBoardToDefault(){
+//        boardPanel.resetBoardToDefault();
+//    }
+
+    public void setBoard(Board board){
+        boardPanel.setBoard(board);
+
     }
 
     public void emptyTheBoard() {
@@ -84,6 +90,14 @@ class LabeledBoardPanel extends JPanel {
 
     public void movePiece(StepMove stepMove){
         boardPanel.movePiece(stepMove);
+    }
+
+    public void fillSquareWithColor(Position position, Color color){
+        boardPanel.fillSquareWithColor(position, color);
+    }
+
+    public void fillSquaresWithColor(Position[] positions, Color color){
+        boardPanel.fillSquaresWithColor(positions, color);
     }
 
 }

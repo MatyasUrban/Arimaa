@@ -30,8 +30,8 @@ public class HistoryPanel extends JPanel {
     private LabeledBoardPanel labeledBoardPanel;
 
 
-    public HistoryPanel(String content, LabeledBoardPanel board) {
-        labeledBoardPanel = board;
+    public HistoryPanel(String content, LabeledBoardPanel labeledBoardPanel) {
+        this.labeledBoardPanel = labeledBoardPanel;
         setLayout(new BorderLayout());
         JButton nextButton = new JButton("Next");
         JButton previousButton = new JButton("Previous");
@@ -125,7 +125,6 @@ public class HistoryPanel extends JPanel {
             currentEnd = -1;
         }
     }
-
 
     public void implementChangesFromNotation(int start, int end, boolean nextMove){
         boolean shouldBeInversed = !nextMove;
