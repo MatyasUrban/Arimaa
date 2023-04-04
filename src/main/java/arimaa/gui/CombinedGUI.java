@@ -58,7 +58,7 @@ public class CombinedGUI {
             Player player1 = new Player(1, false, player1Name);
             Player player2 = new Player(2, false, player2Name);
             Game game = new Game(player1, player2);
-            game.getBoard().initializeBoardFrom2DString(DEFAULT_BOARD, player1, player2);
+            game.getBoard().populateBoardFrom2DString(DEFAULT_BOARD, player1, player2);
             labeledBoardPanel.setBoard(game.getBoard());
             changeRightPanel(new GameControlsPanel(game, labeledBoardPanel));
         });

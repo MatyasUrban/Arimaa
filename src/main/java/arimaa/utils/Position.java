@@ -174,7 +174,7 @@ public class Position {
             new Position(0, 6),
             new Position(0, 7)
     };
-    public static final Position[] silverGoldRow = new Position[]{
+    public static final Position[] silverGoalRow = new Position[]{
             new Position(7, 0),
             new Position(7, 1),
             new Position(7, 2),
