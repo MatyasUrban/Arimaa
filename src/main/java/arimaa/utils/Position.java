@@ -158,4 +158,29 @@ public class Position {
         }
         return positions;
     }
+
+    public static final Position[] trapPositions = new Position[]{
+            new Position(2,2),
+            new Position(2,5),
+            new Position(5,2),
+            new Position(5,5)
+    };
+    public static final Position[] goldGoalRow = new Position[]{
+            new Position(0, 0),
+            new Position(0, 1),
+            new Position(0, 2),
+            new Position(0, 4),
+            new Position(0, 5),
+            new Position(0, 6),
+            new Position(0, 7)
+    };
+    public static final Position[] silverGoldRow = new Position[]{
+            new Position(7, 0),
+            new Position(7, 1),
+            new Position(7, 2),
+            new Position(7, 4),
+            new Position(7, 5),
+            new Position(7, 6),
+            new Position(7, 7)
+    };
 }
