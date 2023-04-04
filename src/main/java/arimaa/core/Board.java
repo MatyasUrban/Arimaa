@@ -170,7 +170,7 @@ public class Board {
         placePiece(secondPiece, position1);
     }
 
-    public Position[] getPositionsOfPlayersPieces(Player player){
+    public ArrayList<Position> getPositionsOfPlayersPieces(Player player){
         ArrayList<Position> positionsArrayList = new ArrayList<>();
         for (int i = 0; i < getBOARD_SIZE(); i++){
             for (int j = 0; j < getBOARD_SIZE(); j++){
@@ -181,8 +181,147 @@ public class Board {
                 }
             }
         }
-        return (Position[]) positionsArrayList.toArray();
+        return positionsArrayList;
     }
+
+    public boolean isFriendlyPieceNearby(Position position){
+        Piece piece = getPieceAt(position);
+        Player owner = piece.getOwner();
+        for (Position onePosition : position.getAdjacentPositions(Direction.getAllDirections())){
+            Piece adjacentPiece = getPieceAt(onePosition);
+            if (adjacentPiece.getOwner() == owner) return true;
+        }
+        return false;
+    }
+
+    public ArrayList<Position> getAdjacentStrongerEnemyPiecesPositions(Position position){
+        ArrayList<Position> positionsArrayList = new ArrayList<>();
+        Piece piece = getPieceAt(position);
+        Player owner = piece.getOwner();
+        for (Position onePosition : position.getAdjacentPositions(Direction.getAllDirections())){
+            Piece adjacentPiece = getPieceAt(onePosition);
+            if (adjacentPiece.getOwner() != owner && adjacentPiece.getType().isStrongerThan(piece.getType())){
+                positionsArrayList.add(onePosition);
+            }
+        }
+        return positionsArrayList;
+    }
+
+    public boolean isStrongerEnemyPieceNearby(Position position){
+        return getAdjacentStrongerEnemyPiecesPositions(position).size()>0;
+    }
+
+    public boolean isPositionFrozen(Position position){
+        return isStrongerEnemyPieceNearby(position) && !isFriendlyPieceNearby(position);
+    }
+
+    public boolean isFrozenAt(Position position){
+        Piece piece = getPieceAt(position);
+        Player owner = piece.getOwner();
+        boolean isFrozen = false;
+        for (Position onePosition : position.getAdjacentPositions(Direction.getAllDirections())){
+            Piece adjacentPiece = getPieceAt(onePosition);
+            if (adjacentPiece.getOwner() == owner){
+                return false;
+            } else if (adjacentPiece.getType().isStrongerThan(piece.getType())){
+                isFrozen = true;
+            }
+        }
+        return isFrozen;
+    }
+
+    public boolean isPositionEmpty(Position position){
+        return getPieceAt(position) == null;
+    }
+    public ArrayList<StepMove> getValidStepMovesForPosition(Position position, boolean rabbitMustRespectDirection){
+        ArrayList<StepMove> stepMoveArrayList = new ArrayList<>();
+        Piece piece = getPieceAt(position);
+        ArrayList<Direction> directionsArrayList;
+        if (!rabbitMustRespectDirection){
+            directionsArrayList = Direction.getAllDirections();
+        } else {
+            directionsArrayList = piece.getPossibleDirections();
+        }
+        if (isFrozenAt(position)) return new ArrayList<>();
+        for (Position onePosition : position.getAdjacentPositions(directionsArrayList)){
+            if(isPositionEmpty(onePosition)){
+                stepMoveArrayList.add(new StepMove(position, onePosition));
+            }
+        }
+        return stepMoveArrayList;
+    }
+
+    public boolean hasEmptyPositionsNearby(Position position){
+        return getValidStepMovesForPosition(position, false).size() > 0;
+    }
+
+    public ArrayList<Position> getPositionsOfPlayersPiecesWhichCanMove(Player player){
+        ArrayList<Position> positionArrayList = new ArrayList<>();
+        for (Position position : getPositionsOfPlayersPieces(player)){
+            if (hasEmptyPositionsNearby(position)) positionArrayList.add(position);
+        }
+        return positionArrayList;
+    }
+
+    public boolean canBePulled(Position position){
+        ArrayList<Position> strongerEnemyNearbyPositions = getAdjacentStrongerEnemyPiecesPositions(position);
+        for (Position onePosition : strongerEnemyNearbyPositions){
+            if(hasEmptyPositionsNearby(onePosition)) return true;
+        }
+        return false;
+    }
+
+    public ArrayList<Position> getPositionsOfEnemyPiecesWhichCanBePulled(Player player, Player enemy){
+        ArrayList<Position> enemyPiecesPositions = getPositionsOfPlayersPieces(enemy);
+        for (Position onePosition : enemyPiecesPositions){
+            if (canBePulled(onePosition)){
+                enemyPiecesPositions.add(onePosition);
+            }
+        }
+        return enemyPiecesPositions;
+    }
+
+    public ArrayList<PullMove> getValidPullMovesForPullerAndPulled(Position pullingPiecePosition, Position pulledPiecePosition){
+        ArrayList<PullMove> pullMoveArrayList = new ArrayList<>();
+        for (StepMove pullerStepMove : getValidStepMovesForPosition(pullingPiecePosition, false)){
+            pullMoveArrayList.add(new PullMove(
+                    pullerStepMove.getFrom(),
+                    pullerStepMove.getTo(),
+                    pulledPiecePosition,
+                    pullingPiecePosition
+                    ));
+        }
+        return pullMoveArrayList;
+    }
+
+    public boolean canBePushed(Position position){
+        return hasEmptyPositionsNearby(position) && isStrongerEnemyPieceNearby(position);
+    }
+
+    public ArrayList<Position> getPositionsOfEnemyPiecesThatCanBePushed(Player player, Player enemy){
+        ArrayList<Position> enemyPiecesPositions = getPositionsOfPlayersPieces(enemy);
+        for (Position onePosition : enemyPiecesPositions){
+            if (canBePushed(onePosition)){
+                enemyPiecesPositions.add(onePosition);
+            }
+        }
+        return enemyPiecesPositions;
+    }
+
+    public ArrayList<PushMove> getValidPushMovesForPusherAndPushed(Position pushingPiecePosition, Position pushedPiecePosition){
+        ArrayList<PushMove> pushMoveArrayList = new ArrayList<>();
+        for (StepMove pushedStepMove : getValidStepMovesForPosition(pushedPiecePosition, false)){
+            pushMoveArrayList.add(new PushMove(
+                    pushingPiecePosition,
+                    pushedPiecePosition,
+                    pushedStepMove.getFrom(),
+                    pushedStepMove.getTo()
+            ));
+        }
+        return pushMoveArrayList;
+    }
+
+
 
 
 

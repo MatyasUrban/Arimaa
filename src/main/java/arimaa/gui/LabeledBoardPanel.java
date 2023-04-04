@@ -8,6 +8,7 @@ import arimaa.utils.Position;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
 class LabeledBoardPanel extends JPanel {
 
@@ -96,7 +97,7 @@ class LabeledBoardPanel extends JPanel {
         boardPanel.fillSquareWithColor(position, color);
     }
 
-    public void fillSquaresWithColor(Position[] positions, Color color){
+    public void fillSquaresWithColor(ArrayList<Position> positions, Color color){
         boardPanel.fillSquaresWithColor(positions, color);
     }
 

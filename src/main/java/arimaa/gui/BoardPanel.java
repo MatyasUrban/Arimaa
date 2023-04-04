@@ -9,6 +9,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 class BoardPanel extends JPanel {
 
@@ -152,7 +153,7 @@ class BoardPanel extends JPanel {
         square.repaint();
     }
 
-    public void fillSquaresWithColor(Position[] positions, Color color){
+    public void fillSquaresWithColor(ArrayList<Position> positions, Color color){
         for(Position position : positions){
             fillSquareWithColor(position, color);
         }

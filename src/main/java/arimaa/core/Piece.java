@@ -98,8 +98,8 @@ public class Piece {
      * Returns the list of possible directions for the piece based on its owner and type.
      * @return A list of possible directions for the piece.
      */
-    public List<Direction> getPossibleDirections() {
-        List<Direction> directions = new ArrayList<>();
+    public ArrayList<Direction> getPossibleDirections() {
+        ArrayList<Direction> directions = new ArrayList<>();
 
         if (type == PieceType.RABBIT) {
             // Rabbits cannot move backward
@@ -112,9 +112,6 @@ public class Piece {
             // All other pieces can move in any of the four directions
             directions.addAll(Arrays.asList(Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST));
         }
-
-        // Filter out directions moving away from the goal direction
-        directions.removeIf(direction -> direction.opposite() == owner.getGoalDirection());
 
         return directions;
     }

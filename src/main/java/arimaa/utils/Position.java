@@ -1,5 +1,6 @@
 package arimaa.utils;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 /**
@@ -97,6 +98,17 @@ public class Position {
         return null;
     }
 
+    public ArrayList<Position> getAdjacentPositions(ArrayList<Direction> directionArrayList){
+        ArrayList<Position> positionsArrayList = new ArrayList<>();
+        for (Direction direction : directionArrayList){
+            Position adjacentPosition = getAdjacentPosition(direction);
+            if (adjacentPosition != null){
+                positionsArrayList.add(adjacentPosition);
+            }
+        }
+        return positionsArrayList;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -135,5 +147,15 @@ public class Position {
             default -> 'a';
         };
         return String.valueOf(columnChar) + rowChar;
+    }
+
+    public static Position[] arrayListToArray(ArrayList<Position> positionArrayList){
+        Position[] positions = new Position[positionArrayList.size()];
+        int i = 0;
+        for(Position onePosition : positionArrayList){
+            positions[i] = onePosition;
+            i++;
+        }
+        return positions;
     }
 }

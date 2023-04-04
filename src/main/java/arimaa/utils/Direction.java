@@ -1,5 +1,8 @@
 package arimaa.utils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 /**
  * The Direction enum represents the four possible directions a piece can move in Arimaa.
  */
@@ -60,5 +63,9 @@ public enum Direction {
         }
 
         return null;
+    }
+
+    public static ArrayList<Direction> getAllDirections(){
+        return new ArrayList<>(Arrays.asList(Direction.values()));
     }
 }
