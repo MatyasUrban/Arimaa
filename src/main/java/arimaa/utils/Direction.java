@@ -18,6 +18,12 @@ public enum Direction {
     private final int dColumn;
     private final String notation;
 
+    /**
+     * Constructs direction object given dRow, dColumn, notation.
+     * @param dRow Row difference = Destination row minus original row.
+     * @param dColumn Column difference = Destination column minus original column.
+     * @param notation String one character notation of the move.
+     */
     Direction(int dRow, int dColumn, String notation) {
         this.dRow = dRow;
         this.dColumn = dColumn;
@@ -26,6 +32,7 @@ public enum Direction {
 
     /**
      * Returns the opposite direction of the current direction.
+     *
      * @return The opposite direction.
      */
     public Direction opposite() {
@@ -35,24 +42,39 @@ public enum Direction {
             case SOUTH -> NORTH;
             case WEST -> EAST;
             case NONE -> NONE;
-            default -> throw new IllegalStateException("Unexpected value: " + this);
         };
     }
 
+    /**
+     * Gets the row difference.
+     *
+     * @return The row difference.
+     */
     public int getDRow() {
         return dRow;
     }
 
+    /**
+     * Gets the column difference.
+     *
+     * @return The column difference.
+     */
     public int getDColumn() {
         return dColumn;
     }
 
+    /**
+     * Gets the String one character notation.
+     *
+     * @return The String one character notation.
+     */
     public String getNotation() {
         return notation;
     }
 
     /**
-     * Returns the Direction object corresponding to the given notation.
+     * Method to create a Direction object corresponding to the given notation.
+     *
      * @param notation The direction notation to convert.
      * @return The Direction object corresponding to the given notation, or null if the notation is invalid.
      */
@@ -65,6 +87,13 @@ public enum Direction {
 
         return null;
     }
+
+    /**
+     * Method to get four directions as an array list.
+     * Needed since Direction.values() is not applicable in my use case.
+     *
+     * @return ArrayList<Direction> of directions.
+     */
     public static ArrayList<Direction> getFourDirections() {
         ArrayList<Direction> arrayList = new ArrayList<>();
         arrayList.add(NORTH);

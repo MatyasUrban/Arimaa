@@ -8,8 +8,14 @@ import java.util.Objects;
 /**
  * The Move class represents a move in the Arimaa game.
  */
-public class Move {
+public abstract class Move {
+    /**
+     * Instance variable: coordinates of the starting position
+     */
     private final Position from;
+    /**
+     * Instance variable: coordinates of the destination positions
+     */
     private final Position to;
 
     /**
@@ -23,62 +29,45 @@ public class Move {
     }
 
     /**
-     * Gets the starting position of the piece being moved.
-     * @return The starting position of the piece being moved.
+     * Method to get the starting position of the piece being moved.
+     *
+     * @return Position object: The starting position of the piece being moved.
      */
     public Position getFrom() {
         return from;
     }
 
     /**
-     * Gets the destination position of the piece being moved.
-     * @return The destination position of the piece being moved.
+     * Method to get the destination position of the piece being moved.
+     *
+     * @return Position object: The destination position of the piece being moved.
      */
     public Position getTo() {
         return to;
     }
 
-    @Override
-    public String toString() {
-        return "Move{" +
-                "from=" + from +
-                ", to=" + to +
-                '}';
-    }
-
+    /**
+     * Method to checked whether two moves are the same in terms of starting and destination Position objects.
+     *
+     * @param o   the reference object with which to compare.
+     * @return Boolean value of the check.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Move move = (Move) o;
-        return Objects.equals(from, move.from) &&
-                Objects.equals(to, move.to);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(from, to);
+        return Objects.equals(from, move.from) && Objects.equals(to, move.to);
     }
 
     /**
-     * Checks if two positions are adjacent on the board.
-     * @param pos1 The first position.
-     * @param pos2 The second position.
-     * @return True if the positions are adjacent, false otherwise.
-     */
-    public static boolean isAdjacent(Position pos1, Position pos2) {
-        int rowDiff = Math.abs(pos1.getRow() - pos2.getRow());
-        int columnDiff = Math.abs(pos1.getColumn() - pos2.getColumn());
-        return (rowDiff == 1 && columnDiff == 0) || (rowDiff == 0 && columnDiff == 1);
-    }
-
-    /**
-     * Returns the direction of the move.
-     * @return The direction of the move.
+     * Method to determine the direction of the move.
+     *
+     * @return The direction enum of the direction of the move.
      */
     public Direction getDirection() {
-        int rowDiff = to.getRow() - from.getRow();
-        int columnDiff = to.getColumn() - from.getColumn();
+        int rowDiff = to.row() - from.row();
+        int columnDiff = to.column() - from.column();
 
         if (rowDiff == 1 && columnDiff == 0) {
             return Direction.NORTH;
@@ -88,9 +77,9 @@ public class Move {
             return Direction.EAST;
         } else if (rowDiff == 0 && columnDiff == -1) {
             return Direction.WEST;
+        } else {
+            return Direction.NONE;
         }
-
-        return null; // Should not happen for valid moves
     }
 }
 

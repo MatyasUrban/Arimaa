@@ -130,7 +130,7 @@ public class HistoryPanel extends JPanel {
         boolean shouldBeInversed = !nextMove;
         if (end - start == 3){
             String pieceString = longText.getText().substring(start, start + 1);
-            Piece piece = Piece.fromNotation(pieceString);
+            Piece piece = Piece.createPieceFromNotationWithGeneralPlayer(pieceString);
             String positionString = longText.getText().substring(start + 1, end);
             Position position = Position.fromString(positionString);
             if (shouldBeInversed){
@@ -140,13 +140,13 @@ public class HistoryPanel extends JPanel {
             }
         } else if (end - start > 3){
             String pieceString = longText.getText().substring(start, start + 1);
-            Piece piece = Piece.fromNotation(pieceString);
+            Piece piece = Piece.createPieceFromNotationWithGeneralPlayer(pieceString);
             String positionString = longText.getText().substring(start + 1, end - 1);
             Position positionFrom = Position.fromString(positionString);
             Direction direction = Direction.fromNotation(longText.getText().charAt(end - 1));
             assert positionFrom != null;
             assert direction != null;
-            Position positionTo = new Position(positionFrom.getRow() + direction.getDRow(), positionFrom.getColumn() + direction.getDColumn());
+            Position positionTo = new Position(positionFrom.row() + direction.getDRow(), positionFrom.column() + direction.getDColumn());
             if (positionFrom.equals(positionTo)){
                 if (shouldBeInversed){
                     labeledBoardPanel.placePieceAt(piece, positionFrom);

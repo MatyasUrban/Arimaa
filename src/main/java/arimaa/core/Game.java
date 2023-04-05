@@ -10,6 +10,7 @@ public class Game {
     private Boolean gameEnded;
     private int gamePhase;
 
+    private GameListener gameListener;
     public Game(Player player1, Player player2) {
         this.board = new Board();
         this.player1 = player1;
@@ -17,6 +18,13 @@ public class Game {
         this.currentPlayer = player1;
         this.gameEnded = false;
         this.gamePhase = 1;
+    }
+    public void setGameListener(GameListener gameListener){
+        this.gameListener = gameListener;
+    }
+
+    public GameListener getGameListener(){
+        return gameListener;
     }
 
     public Game(){
@@ -53,27 +61,30 @@ public class Game {
     }
 
     public void startGame() {
-        // Phase 1: Player 1 arranges their pieces
+        gameListener.onGamePhaseChanged(gamePhase);
         arrangePieces(player1);
 
-        // Phase 2: Player 2 arranges their pieces
+        gameListener.onGamePhaseChanged(gamePhase);
         arrangePieces(player2);
 
-        // Phase 3: The game begins
-//        while (!board.hasPlayerWon(player1) && !board.hasPlayerWon(player2)) {
-//            // It's the current player's turn
-//            playTurn(currentPlayer);
-//
-//            // Switch to the other player
-//            currentPlayer = (currentPlayer == player1) ? player2 : player1;
-//        }
-//
-//        // Announce the winner
-//        if (board.hasPlayerWon(player1)) {
-//            System.out.println("Player 1 wins!");
-//        } else {
-//            System.out.println("Player 2 wins!");
-//        }
+        gameListener.onGamePhaseChanged(gamePhase);
+        while (!board.hasPlayerWon(player1, player2) && !board.hasPlayerWon(player2, player1)) {
+            // It's the current player's turn
+            playTurn(currentPlayer);
+
+            // Switch to the other player
+            currentPlayer = (currentPlayer == player1) ? player2 : player1;
+            gamePhase += 1;
+            gameListener.onGamePhaseChanged(gamePhase);
+        }
+
+
+        if (board.hasPlayerWon(player1, player2)) {
+            System.out.println("Player 1 wins!");
+        } else {
+            System.out.println("Player 2 wins!");
+        }
+        gameListener.onGameEnded(board.hasPlayerWon(player1, player2) ? player1 : player2);
     }
 
     private void arrangePieces(Player player) {

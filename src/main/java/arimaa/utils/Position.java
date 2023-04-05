@@ -1,35 +1,74 @@
 package arimaa.utils;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 /**
- * The Position class represents a position on the Arimaa game board.
+ * The Position record represents a position on the Arimaa game board.
+ *
+ * @param row The row of the position.
+ * @param column The column of the position.
  */
-public class Position {
-    private final int row;
-    private final int column;
-
-    /**
-     * Constructs a new Position object with the specified row and column.
-     * @param row    The row of the position.
-     * @param column The column of the position.
-     */
-    public Position(int row, int column) {
-        this.row = row;
-        this.column = column;
-    }
+public record Position(int row, int column) {
 
     /**
      * Gets the row number of the position.
+     *
      * @return The row number of the position.
      */
-    public int getRow() {
+    @Override
+    public int row() {
         return row;
     }
 
     /**
-     * Gets the new position after move in designated direction.
+     * Gets the column number of the position.
+     *
+     * @return The column number of the position.
+     */
+    @Override
+    public int column() {
+        return column;
+    }
+
+    /**
+     * Constant for the trap positions (any piece being here without a friendly adjacent piece shall be removed)
+     */
+    public static final Position[] TRAP_POSITIONS = new Position[]{
+            new Position(2, 2),
+            new Position(2, 5),
+            new Position(5, 2),
+            new Position(5, 5)
+    };
+
+    /**
+     * Constant for the upper row (gold rabbit being in the row is a winning condition)
+     */
+    public static final Position[] GOLD_GOAL_ROW = new Position[]{
+            new Position(0, 0),
+            new Position(0, 1),
+            new Position(0, 2),
+            new Position(0, 4),
+            new Position(0, 5),
+            new Position(0, 6),
+            new Position(0, 7)
+    };
+
+    /**
+     * Constant for the bottom row (silver rabbit being in the row is a winning condition)
+     */
+    public static final Position[] SILVER_GOAL_ROW = new Position[]{
+            new Position(7, 0),
+            new Position(7, 1),
+            new Position(7, 2),
+            new Position(7, 4),
+            new Position(7, 5),
+            new Position(7, 6),
+            new Position(7, 7)
+    };
+
+    /**
+     * Method to get the new position after move in designated direction.
+     *
      * @param direction The direction of the move.
      * @return The position after the move.
      */
@@ -38,15 +77,8 @@ public class Position {
     }
 
     /**
-     * Gets the column number of the position.
-     * @return The column number of the position.
-     */
-    public int getColumn() {
-        return column;
-    }
-
-    /**
      * Creates a Position object from a string in the format "b1".
+     *
      * @param positionString The position string to convert.
      * @return The Position object corresponding to the given string, or null if the string is invalid.
      */
@@ -56,7 +88,7 @@ public class Position {
         }
         char rowChar = positionString.charAt(1);
         char columnChar = positionString.charAt(0);
-        int rowInt = switch (rowChar){
+        int rowInt = switch (rowChar) {
             case '1' -> 7;
             case '2' -> 6;
             case '3' -> 5;
@@ -67,7 +99,7 @@ public class Position {
             case '8' -> 0;
             default -> 0;
         };
-        int columnInt = switch (columnChar){
+        int columnInt = switch (columnChar) {
             case 'a' -> 0;
             case 'b' -> 1;
             case 'c' -> 2;
@@ -83,7 +115,9 @@ public class Position {
     }
 
     /**
-     * Gets the adjacent position in the specified direction.
+     * Method to get the valid adjacent position in the specified direction.
+     * If the new position is out of bounds of the board, null is returned.
+     *
      * @param direction The direction to get the adjacent position.
      * @return The adjacent position in the specified direction, or null if the position is outside the board boundaries.
      */
@@ -98,17 +132,29 @@ public class Position {
         return null;
     }
 
-    public ArrayList<Position> getAdjacentPositions(ArrayList<Direction> directionArrayList){
+    /**
+     * Method to get all valid adjacent positions in given directions arrayList.
+     *
+     * @param directionArrayList List of directions in which we want to get positions.
+     * @return List of valid positions.
+     */
+    public ArrayList<Position> getAdjacentPositions(ArrayList<Direction> directionArrayList) {
         ArrayList<Position> positionsArrayList = new ArrayList<>();
-        for (Direction direction : directionArrayList){
+        for (Direction direction : directionArrayList) {
             Position adjacentPosition = getAdjacentPosition(direction);
-            if (adjacentPosition != null){
+            if (adjacentPosition != null) {
                 positionsArrayList.add(adjacentPosition);
             }
         }
         return positionsArrayList;
     }
 
+    /**
+     * Method to check if both position objects refer to the same position.
+     *
+     * @param o   the reference object with which to compare.
+     * @return Boolean value of the check.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -117,14 +163,15 @@ public class Position {
         return row == position.row && column == position.column;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(row, column);
-    }
-
+    /**
+     * Method to get the string representation of the position.
+     * column 0-1 -> a-h; row 0-1 -> 8-1
+     *
+     * @return String representation of the board.
+     */
     @Override
     public String toString() {
-        char rowChar = switch (getRow()){
+        char rowChar = switch (row()) {
             case 0 -> '8';
             case 1 -> '7';
             case 2 -> '6';
@@ -135,7 +182,7 @@ public class Position {
             case 7 -> '1';
             default -> '1';
         };
-        char columnChar = switch (getColumn()) {
+        char columnChar = switch (column()) {
             case 0 -> 'a';
             case 1 -> 'b';
             case 2 -> 'c';
@@ -149,38 +196,19 @@ public class Position {
         return String.valueOf(columnChar) + rowChar;
     }
 
-    public static Position[] arrayListToArray(ArrayList<Position> positionArrayList){
+    /**
+     * Method to convert array list with position objects to array with position objects.
+     *
+     * @param positionArrayList Array list with positions.
+     * @return Array with positions.
+     */
+    public static Position[] arrayListToArray(ArrayList<Position> positionArrayList) {
         Position[] positions = new Position[positionArrayList.size()];
         int i = 0;
-        for(Position onePosition : positionArrayList){
+        for (Position onePosition : positionArrayList) {
             positions[i] = onePosition;
             i++;
         }
         return positions;
     }
-
-    public static final Position[] trapPositions = new Position[]{
-            new Position(2,2),
-            new Position(2,5),
-            new Position(5,2),
-            new Position(5,5)
-    };
-    public static final Position[] goldGoalRow = new Position[]{
-            new Position(0, 0),
-            new Position(0, 1),
-            new Position(0, 2),
-            new Position(0, 4),
-            new Position(0, 5),
-            new Position(0, 6),
-            new Position(0, 7)
-    };
-    public static final Position[] silverGoalRow = new Position[]{
-            new Position(7, 0),
-            new Position(7, 1),
-            new Position(7, 2),
-            new Position(7, 4),
-            new Position(7, 5),
-            new Position(7, 6),
-            new Position(7, 7)
-    };
 }

@@ -2,8 +2,17 @@ package arimaa.core;
 
 import arimaa.utils.Position;
 
+/**
+ * The PullMove class represents a pull move in the Arimaa game.
+ */
 public class PullMove extends Move {
+    /**
+     * Instance variable: Starting position of pulled piece
+     */
     private final Position pulledPieceFrom;
+    /**
+     * Instance variable: Destination position of the pulled piece
+     */
     private final Position pulledPieceTo;
 
     /**
@@ -22,6 +31,7 @@ public class PullMove extends Move {
 
     /**
      * Gets the starting position of the pulled piece.
+     *
      * @return The starting position of the pulled piece.
      */
     public Position getPulledPieceFrom() {
@@ -30,6 +40,7 @@ public class PullMove extends Move {
 
     /**
      * Gets the destination position of the pulled piece.
+     *
      * @return The destination position of the pulled piece.
      */
     public Position getPulledPieceTo() {

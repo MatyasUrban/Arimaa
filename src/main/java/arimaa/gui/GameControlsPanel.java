@@ -1,12 +1,14 @@
 package arimaa.gui;
 
 import arimaa.core.Game;
+import arimaa.core.GameListener;
+import arimaa.core.Player;
 
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
-public class GameControlsPanel extends JPanel {
+public class GameControlsPanel extends JPanel implements GameListener {
 
     private JLabel playerTopName;
     private JLabel playerTopTime;
@@ -126,11 +128,21 @@ public class GameControlsPanel extends JPanel {
         finishedButton.addActionListener(e -> {
 
         });
-        while (!game.getGameEnded()){
-            if (game.getGamePhase() == 1){
-                labeledBoardPanel.fillSquaresWithColor(game.getBoard().getPositionsOfPlayersPieces(game.getCurrentPlayer()), Color.white);
-            }
+    }
+
+    // Add the following methods to implement the GameListener interface
+
+    @Override
+    public void onGamePhaseChanged(int gamePhase){
+        while (true){
+
         }
+    }
+
+    @Override
+    public void onGameEnded(Player winner) {
+        JOptionPane.showMessageDialog(this, winner.getPlayerName() + " wins!", "Game Over", JOptionPane.INFORMATION_MESSAGE);
+        // Perform any other actions needed when the game ends, such as disabling controls
     }
 
 

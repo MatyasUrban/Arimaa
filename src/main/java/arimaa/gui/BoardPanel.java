@@ -18,21 +18,10 @@ class BoardPanel extends JPanel {
 
     private final JPanel[][] squares;
 
-//    private static final String[][] DEFAULT_BOARD = {
-//            {"r", "r", "r", "r", "r", "r", "r", "r"},
-//            {"e", "m", "h", "h", "d", "d", "c", "c"},
-//            {"", "", "", "", "", "", "", ""},
-//            {"", "", "", "", "", "", "", ""},
-//            {"", "", "", "", "", "", "", ""},
-//            {"", "", "", "", "", "", "", ""},
-//            {"E", "M", "H", "H", "D", "D", "C", "C"},
-//            {"R", "R", "R", "R", "R", "R", "R", "R"}
-//    };
-
 
     public BoardPanel(Board board) {
         this.board = board;
-        gridSize = board.getBOARD_SIZE();
+        gridSize = Board.BOARD_SIZE;
         squares = new JPanel[gridSize][gridSize];
         setLayout(new GridLayout(gridSize, gridSize));
         int tileSize = 70;
@@ -73,8 +62,8 @@ class BoardPanel extends JPanel {
     private void fillPositionWithPiece(Piece piece, JPanel square){
         square.removeAll();
         if (piece != null){
-            String pieceName = piece.getType().getName();
-            char ownerChar = piece.getOwner().getColor().getBigChar();
+            String pieceName = piece.type().getName();
+            char ownerChar = piece.owner().getColor().getBigChar();
             String photoName = pieceName + "-" + ownerChar;
             ImageIcon pieceIcon = loadImageIcon("piece-icons/" + photoName + ".png");
             if (pieceIcon != null) {
@@ -147,7 +136,7 @@ class BoardPanel extends JPanel {
     }
 
     public void fillSquareWithColor(Position position, Color color){
-        JPanel square = squares[position.getRow()][position.getColumn()];
+        JPanel square = squares[position.row()][position.column()];
         square.setBackground(color);
         square.revalidate();
         square.repaint();
@@ -158,19 +147,6 @@ class BoardPanel extends JPanel {
             fillSquareWithColor(position, color);
         }
     }
-
-
-//    public void resetBoardToDefault() {
-//        for (int i = 0; i < gridSize; i++) {
-//            for (int j = 0; j < gridSize; j++) {
-//                Position position = new Position(i, j);
-//                String pieceString = BoardPanel.defaultBoard[i][j];
-//                Piece piece = Piece.fromNotation(pieceString);
-//                board.placePiece(piece, position);
-//            }
-//        }
-//        fillSquaresWithBoard();
-//    }
 
     public void emptyTheBoard(){
         board.emptyBoard();

@@ -1,7 +1,6 @@
 package arimaa.gui;
 
 import arimaa.core.Board;
-import arimaa.core.Move;
 import arimaa.core.Piece;
 import arimaa.core.StepMove;
 import arimaa.utils.Position;

@@ -4,115 +4,90 @@ import arimaa.utils.Direction;
 import arimaa.utils.PieceType;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 
 /**
- * Represents a single piece on the Arimaa board with its type and owner.
+ * The Piece record represents a single piece on the Arimaa board characterized by its type and owner.
+ *
+ * @param type  PieceType object determining the type (RABBIT, CAT, DOG, HORSE, CAMEL, ELEPHANT)
+ * @param owner Player object determining the player who owns the piece.
  */
-public class Piece {
-
-    private final PieceType type;
-    private final Player owner;
+public record Piece(PieceType type, Player owner) {
 
     /**
-     * Constructs a new Piece with the specified type and owner.
-     * @param type  The type of the piece (RABBIT, CAT, DOG, HORSE, CAMEL, ELEPHANT).
-     * @param owner The owner of the piece (Player object).
-     */
-    public Piece(PieceType type, Player owner){
-        this.type = type;
-        this.owner = owner;
-    }
-
-    // general piece, not associated with a specific player
-    public static Piece fromNotation(String s){
-        if (Objects.equals(s, "")){
-            return null;
-        }
-        PieceType pieceType = PieceType.fromNotation(s.toLowerCase().charAt(0));
-        int playerNumber = Character.isUpperCase(s.charAt(0)) ? 1 : 2;
-        Player player = new Player(playerNumber, false);
-        return new Piece(pieceType, player);
-    }
-
-    public static Piece fromNotationPlayerSpecific(String pieceTypeString, Player player){
-        if (Objects.equals(pieceTypeString, "")){
-            return null;
-        }
-        PieceType pieceType = PieceType.fromNotation(pieceTypeString.toLowerCase().charAt(0));
-        return new Piece(pieceType, player);
-    }
-
-    /**
-     * Returns the type of the piece.
+     * Method to get the type of the piece.
+     *
      * @return The type of the piece (RABBIT, CAT, DOG, HORSE, CAMEL, ELEPHANT).
      */
-    public PieceType getType() {
+    @Override
+    public PieceType type() {
         return type;
     }
 
     /**
-     * Returns the owner of the piece.
+     * Method to get the owner of the piece.
+     *
      * @return The owner of the piece (Player object).
      */
-    public Player getOwner() {
+    @Override
+    public Player owner() {
         return owner;
     }
 
-
     /**
-     * Creates the string representation of the current piece.
-     * @return The string representation of the current piece
-     */
-    @Override
-    public String toString() {
-        String pieceString = getType().toString();
-        if (Objects.equals(getOwner().getColor().toString(), "GOLD")) {
-            pieceString.toUpperCase();
-        }
-        return pieceString;
-
-    }
-
-    /**
-     * Checks whether pieces are the same in terms of owner and type.
-     * @param object The object being compared.
-     * @return Truth value of object comparison.
-     */
-    @Override
-    public boolean equals(Object object) {
-        if (this == object) return true;
-        if (object == null || getClass() != object.getClass()) return false;
-        Piece piece = (Piece) object;
-        return type == piece.type && Objects.equals(owner, piece.owner);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(type, owner);
-    }
-
-    /**
-     * Returns the list of possible directions for the piece based on its owner and type.
-     * @return A list of possible directions for the piece.
+     * Method to get the list of possible directions for the piece based on its owner and type.
+     * Gold rabbit - north, west, east; Silver rabbit - south, west, east; other pieces in all directions
+     *
+     * @return ArrayList<Direction> of possible directions for the piece.
      */
     public ArrayList<Direction> getPossibleDirections() {
         ArrayList<Direction> directions = new ArrayList<>();
-
+        directions.add(Direction.NORTH);
+        directions.add(Direction.WEST);
+        directions.add(Direction.SOUTH);
+        directions.add(Direction.EAST);
         if (type == PieceType.RABBIT) {
-            // Rabbits cannot move backward
-            directions.addAll(Arrays.asList(Direction.NORTH, Direction.EAST, Direction.WEST));
-            if (owner.getGoalDirection() == Direction.SOUTH) {
+            if (owner.getGoalDirection() == Direction.NORTH) {
+                directions.remove(Direction.SOUTH);
+            } else {
                 directions.remove(Direction.NORTH);
-                directions.add(Direction.SOUTH);
             }
-        } else {
-            // All other pieces can move in any of the four directions
-            directions.addAll(Arrays.asList(Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST));
         }
-
         return directions;
+    }
+
+    /**
+     * Static method to create a Piece object from String where owner does not matter.
+     * Used for viewing Game history, read from text file. For that purpose we do not need advanced game methods requiring a player.
+     *
+     * @param pieceTypeString String representing the piece type [EMHCDRemhcdr].
+     * @return Piece object of correct type and general player.
+     */
+    public static Piece createPieceFromNotationWithGeneralPlayer(String pieceTypeString) {
+        // empty string returns a null object
+        if (Objects.equals(pieceTypeString, "")) {
+            return null;
+        }
+        PieceType pieceType = PieceType.fromNotation(pieceTypeString.toLowerCase().charAt(0));
+        // the player number is important as it determines whether player is 1 (gold, heads north), 2 (silver, heads south)
+        int playerNumber = Character.isUpperCase(pieceTypeString.charAt(0)) ? 1 : 2;
+        Player player = new Player(playerNumber, false);
+        return new Piece(pieceType, player);
+    }
+
+    /**
+     * Static method to create a Piece object from String with a given Player owner.
+     * Used for playing the game, as commonly we need to get all pieces assigned to a specific player.
+     *
+     * @param pieceTypeString String representing the piece type [EMHCDRemhcdr].
+     * @param player          Player object determining the player.
+     * @return Piece object of correct type and general player.
+     */
+    public static Piece createPieceFromNotationPlayerWithSpecificPlayer(String pieceTypeString, Player player) {
+        if (Objects.equals(pieceTypeString, "")) {
+            return null;
+        }
+        PieceType pieceType = PieceType.fromNotation(pieceTypeString.toLowerCase().charAt(0));
+        return new Piece(pieceType, player);
     }
 }
