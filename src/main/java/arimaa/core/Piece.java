@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 /**
- * The Piece record represents a single piece on the Arimaa board characterized by its type and owner.
+ * The Piece record represents a single piece in the Arimaa game.
  *
  * @param type  PieceType object determining the type (RABBIT, CAT, DOG, HORSE, CAMEL, ELEPHANT)
  * @param owner Player object determining the player who owns the piece.

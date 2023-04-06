@@ -3,7 +3,7 @@ package arimaa.core;
 import arimaa.utils.Position;
 
 /**
- * This StepMove class represents a single 1-step move in the
+ * This StepMove class represents a step move in the Arimaa game.
  */
 public class StepMove extends Move {
     /**
