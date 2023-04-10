@@ -102,4 +102,6 @@ public enum Direction {
         arrayList.add(EAST);
         return arrayList;
     };
+
+
 }

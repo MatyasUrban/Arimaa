@@ -2,13 +2,9 @@ package arimaa.gui;
 
 import arimaa.core.Game;
 import arimaa.core.GameListener;
-import arimaa.core.Player;
 import arimaa.utils.BoardMode;
-import arimaa.utils.Position;
 
 import java.awt.*;
-import java.awt.event.MouseListener;
-import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
@@ -18,8 +14,8 @@ public class GameControlsPanel extends JPanel implements GameListener {
     private JLabel playerTopTime;
     private JLabel playerBottomName;
     private JLabel playerBottomTime;
-    private JLabel turnIndicator;
-    private JLabel movesLeft;
+    private JLabel turnIndicatorTextPanel;
+    private JLabel movesLeftTextPanel;
     private ButtonGroup actionTypeGroup;
 
     private JRadioButton switchButton;
@@ -35,38 +31,40 @@ public class GameControlsPanel extends JPanel implements GameListener {
 
     private final LabeledBoardPanel labeledBoardPanel;
 
+    private final JPanel group3;
+
     public GameControlsPanel(Game game, LabeledBoardPanel labeledBoardPanel) {
         this.game = game;
         this.labeledBoardPanel = labeledBoardPanel;
         setLayout(new BorderLayout());
         setBorder(new EmptyBorder(0, 0, 0, 0));
 
-        playerTopName = createColoredLabel("Player 2 (" + game.getPlayer2().getPlayerName() + ")", Color.CYAN, 14);
+        playerTopName = createColoredLabel("Player 2 BLUE (" + game.getPlayer2().getPlayerName() + ")", Color.CYAN, 14);
         playerTopTime = createColoredLabel("00:00:00", Color.CYAN, 18, true);
-        playerBottomName = createColoredLabel("Player 1 (" + game.getPlayer1().getPlayerName() + ")", Color.YELLOW, 14);
+        playerBottomName = createColoredLabel("Player 1 YELLOW (" + game.getPlayer1().getPlayerName() + ")", Color.YELLOW, 14);
         playerBottomTime = createColoredLabel("00:00:00", Color.YELLOW, 18, true);
 
-        turnIndicator = new JLabel("Player 1's Turn");
-        turnIndicator.setForeground(Color.BLACK);
-        movesLeft = new JLabel("Arrange your pieces");
+        turnIndicatorTextPanel = new JLabel("Player 1's Turn");
+        turnIndicatorTextPanel.setForeground(Color.BLACK);
+        movesLeftTextPanel = new JLabel("Arrange your pieces");
 
-        switchButton = new JRadioButton("Switch");
+        switchButton = new JRadioButton(BoardMode.SWITCH.getModeName());
         switchButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, switchButton.getMinimumSize().height));
         switchButton.setOpaque(true);
         switchButton.setBackground(BoardMode.SWITCH.getColor());
-        noneButton = new JRadioButton("None");
+        noneButton = new JRadioButton(BoardMode.NONE.getModeName());
         noneButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, noneButton.getMinimumSize().height));
         noneButton.setOpaque(true);
         noneButton.setBackground(BoardMode.NONE.getColor());
-        stepButton = new JRadioButton("Step");
+        stepButton = new JRadioButton(BoardMode.STEP.getModeName());
         stepButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, stepButton.getMinimumSize().height));
         stepButton.setOpaque(true);
         stepButton.setBackground(BoardMode.STEP.getColor());
-        pushButton = new JRadioButton("Push");
+        pushButton = new JRadioButton(BoardMode.PUSH.getModeName());
         pushButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, pushButton.getMinimumSize().height));
         pushButton.setOpaque(true);
         pushButton.setBackground(BoardMode.PUSH.getColor());
-        pullButton = new JRadioButton("Pull");
+        pullButton = new JRadioButton(BoardMode.PULL.getModeName());
         pullButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, pullButton.getMinimumSize().height));
         pullButton.setOpaque(true);
         pullButton.setBackground(BoardMode.PULL.getColor());
@@ -116,19 +114,13 @@ public class GameControlsPanel extends JPanel implements GameListener {
         radioButtonsPanel.add(pushButton);
         radioButtonsPanel.add(Box.createRigidArea(new Dimension(0, 5)));
         radioButtonsPanel.add(pullButton);
-        Color turnColor;
-        if (game.getGamePhase() % 2 == 1){
-            turnColor = Color.YELLOW;
-        } else {
-            turnColor = Color.CYAN;
-        }
-        JPanel group3 = createGroupPanel(turnColor);
+        group3 = createGroupPanel(Color.WHITE);
         group3.setLayout(new BoxLayout(group3, BoxLayout.Y_AXIS));
 
         group3.add(Box.createVerticalGlue());
-        group3.add(turnIndicator);
+        group3.add(turnIndicatorTextPanel);
         group3.add(Box.createRigidArea(new Dimension(0, 5)));
-        group3.add(movesLeft);
+        group3.add(movesLeftTextPanel);
         group3.add(Box.createRigidArea(new Dimension(0, 5)));
         group3.add(radioButtonsPanel);
         group3.add(Box.createRigidArea(new Dimension(0, 5)));
@@ -136,22 +128,16 @@ public class GameControlsPanel extends JPanel implements GameListener {
         group3.add(Box.createRigidArea(new Dimension(0, 5)));
         group3.add(resignButton);
         group3.add(Box.createVerticalGlue());
-
-
         add(group1, BorderLayout.NORTH);
         add(group3, BorderLayout.CENTER);
         add(group2, BorderLayout.SOUTH);
+        setTurnFormatting();
         finishedButton.addActionListener(e -> {
-            if (game.getGamePhase() == 1) {
-                // Remove MouseAdapter from player's pieces
-                ArrayList<Position> playerPiecePositions = game.getBoard().getPositionsOfPlayersPieces(game.getCurrentPlayer());
-                for (Position position : playerPiecePositions) {
-                    for (MouseListener listener : labeledBoardPanel.getSquares()[position.row()][position.column()].getMouseListeners()) {
-                        labeledBoardPanel.getSquares()[position.row()][position.column()].removeMouseListener(listener);
-                    }
-                }
-                // Proceed to the next phase
-            }
+            labeledBoardPanel.resetSquaresColors();
+            labeledBoardPanel.setBoardMode(BoardMode.NONE);
+            labeledBoardPanel.handleModeReset();
+            game.incrementPhase();
+            setTurnFormatting();
         });
         switchButton.addActionListener(e -> {
             labeledBoardPanel.setBoardMode(BoardMode.SWITCH);
@@ -175,22 +161,52 @@ public class GameControlsPanel extends JPanel implements GameListener {
         });
     }
 
+    private void setTurnFormatting(){
+        Color turnColor;
+        if (game.getGamePhase() % 2 == 1){
+            turnColor = Color.YELLOW;
+            turnIndicatorTextPanel.setText("Player 1's Turn");
+        } else {
+            turnColor = Color.CYAN;
+            turnIndicatorTextPanel.setText("Player 2's Turn");
+        }
+        if (game.getGamePhase() <= 2){
+            movesLeftTextPanel.setText("Arrange your pieces");
+            switchButton.setVisible(true);
+            noneButton.setVisible(true);
+            stepButton.setVisible(false);
+            pushButton.setVisible(false);
+            pullButton.setVisible(false);
+            noneButton.setSelected(true);
+        } else {
+            movesLeftTextPanel.setText("4 moves left");
+            switchButton.setVisible(false);
+            noneButton.setVisible(true);
+            stepButton.setVisible(true);
+            pushButton.setVisible(true);
+            pullButton.setVisible(true);
+            noneButton.setSelected(true);
+        }
+        group3.setBackground(turnColor);
+    }
+
     // Add the following methods to implement the GameListener interface
 
     @Override
-    public void onGamePhaseChanged(int gamePhase){
-        Player player1 = game.getCurrentPlayer();
-        Player enemy = game.getEnemyPlayer();
-        if (gamePhase == 1){
-            labeledBoardPanel.setBoardMode(BoardMode.SWITCH);
-            switchButton.setSelected(true);
+    public void onMovesLeftChanged(int movesLeft){
+        if(game.getMovesLeftThisTurn() > 0){
+            movesLeftTextPanel.setText(movesLeft + " moves lemoves left");
+            if (game.getMovesLeftThisTurn() < 2){
+                pushButton.setVisible(false);
+                pullButton.setVisible(false);
+            }
+        } else {
+            labeledBoardPanel.resetSquaresColors();
+            labeledBoardPanel.setBoardMode(BoardMode.NONE);
+            labeledBoardPanel.handleModeReset();
+            game.incrementPhase();
+            setTurnFormatting();
         }
-    }
-
-    @Override
-    public void onGameEnded(Player winner) {
-        JOptionPane.showMessageDialog(this, winner.getPlayerName() + " wins!", "Game Over", JOptionPane.INFORMATION_MESSAGE);
-        // Perform any other actions needed when the game ends, such as disabling controls
     }
 
 

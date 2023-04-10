@@ -1,5 +1,6 @@
 package arimaa.core;
 
+import arimaa.utils.Color;
 import arimaa.utils.Direction;
 import arimaa.utils.PieceType;
 
@@ -89,5 +90,14 @@ public record Piece(PieceType type, Player owner) {
         }
         PieceType pieceType = PieceType.fromNotation(pieceTypeString.toLowerCase().charAt(0));
         return new Piece(pieceType, player);
+    }
+
+    @Override
+    public String toString(){
+        if (owner.getColor() == Color.GOLD){
+            return String.valueOf(type.getNotation()).toUpperCase();
+        } else {
+            return String.valueOf(type.getNotation());
+        }
     }
 }

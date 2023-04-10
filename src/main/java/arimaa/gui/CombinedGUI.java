@@ -117,7 +117,7 @@ public class CombinedGUI {
 
         // Set the menu bar for the JFrame
         frame.setJMenuBar(menuBar);
-        labeledBoardPanel = new LabeledBoardPanel(new Game());
+        labeledBoardPanel = new LabeledBoardPanel(new Game(new Player(1, false), new Player(2, false)));
         frame.add(labeledBoardPanel, BorderLayout.CENTER);
 
         WelcomePanel welcomePanel = new WelcomePanel();
@@ -133,13 +133,13 @@ public class CombinedGUI {
         singleplayerItem.addActionListener(e -> {
             // Add your singleplayer game logic here
             // For now, just changing the right panel to GameControlsPanel
-            changeRightPanel(new GameControlsPanel(new Game(), labeledBoardPanel));
+            changeRightPanel(new GameControlsPanel(new Game(new Player(1, false), new Player(2, true)), labeledBoardPanel));
         });
 
         continuePlayingItem.addActionListener(e -> {
             // Add your continue playing game logic here
             // For now, just changing the right panel to GameControlsPanel
-            changeRightPanel(new GameControlsPanel(new Game(), labeledBoardPanel));
+            changeRightPanel(new GameControlsPanel(new Game(new Player(1, false), new Player(2, false)), labeledBoardPanel));
         });
 
         viewStepsItem.addActionListener(e -> {
@@ -167,7 +167,7 @@ public class CombinedGUI {
                     }
 
                     // Pass the content to the HistoryPanel
-                    labeledBoardPanel.setBoard(new Game().getBoard());
+                    labeledBoardPanel.setGame(new Game(new Player(1, false), new Player(2, false)));
                     changeRightPanel(new HistoryPanel(content.toString(), labeledBoardPanel));
                 } else {
                     JOptionPane.showMessageDialog(frame, "This file is not a valid Arimaa game.", "Invalid file", JOptionPane.WARNING_MESSAGE);

@@ -1,5 +1,6 @@
 package arimaa.core;
 
+import arimaa.utils.Direction;
 import arimaa.utils.Position;
 
 /**
@@ -45,6 +46,23 @@ public class PullMove extends Move {
      */
     public Position getPulledPieceTo() {
         return pulledPieceTo;
+    }
+
+    public Direction getPulledPieceDirection(){
+        int rowDiff = pulledPieceTo.row() - pulledPieceFrom.row();
+        int columnDiff = pulledPieceTo.column() - pulledPieceFrom.column();
+
+        if (rowDiff == 1 && columnDiff == 0) {
+            return Direction.SOUTH;
+        } else if (rowDiff == -1 && columnDiff == 0) {
+            return Direction.NORTH;
+        } else if (rowDiff == 0 && columnDiff == 1) {
+            return Direction.EAST;
+        } else if (rowDiff == 0 && columnDiff == -1) {
+            return Direction.WEST;
+        } else {
+            return Direction.NONE;
+        }
     }
 
 }

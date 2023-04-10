@@ -26,6 +26,10 @@ public enum Color {
         return displayName.charAt(0);
     }
 
+    public char getSmallChar(){
+        return displayName.toLowerCase().charAt(0);
+    }
+
     /**
      * Method to get the string representation of the color.
      * @return The string representation of the color.

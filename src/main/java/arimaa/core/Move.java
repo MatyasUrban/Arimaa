@@ -70,9 +70,9 @@ public abstract class Move {
         int columnDiff = to.column() - from.column();
 
         if (rowDiff == 1 && columnDiff == 0) {
-            return Direction.NORTH;
-        } else if (rowDiff == -1 && columnDiff == 0) {
             return Direction.SOUTH;
+        } else if (rowDiff == -1 && columnDiff == 0) {
+            return Direction.NORTH;
         } else if (rowDiff == 0 && columnDiff == 1) {
             return Direction.EAST;
         } else if (rowDiff == 0 && columnDiff == -1) {
@@ -80,6 +80,11 @@ public abstract class Move {
         } else {
             return Direction.NONE;
         }
+    }
+
+    @Override
+    public String toString(){
+        return from + getDirection().getNotation();
     }
 }
 

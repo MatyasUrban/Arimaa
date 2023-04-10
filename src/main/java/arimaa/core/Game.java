@@ -10,14 +10,17 @@ public class Game {
     private Player enemyPlayer;
     private Boolean gameEnded;
     private int gamePhase;
+    private final StringBuilder stepsBuilder;
+
+    private int movesLeftThisTurn;
     public static final String[][] DEFAULT_BOARD = {
             {"r", "r", "r", "r", "r", "r", "r", "r"},
             {"e", "m", "h", "h", "d", "d", "c", "c"},
-            {"", "E", "", "", "", "", "", ""},
             {"", "", "", "", "", "", "", ""},
             {"", "", "", "", "", "", "", ""},
             {"", "", "", "", "", "", "", ""},
-            {"", "M", "H", "H", "D", "D", "C", "C"},
+            {"", "", "", "", "", "", "", ""},
+            {"E", "M", "H", "H", "D", "D", "C", "C"},
             {"R", "R", "R", "R", "R", "R", "R", "R"}
     };
 
@@ -30,6 +33,8 @@ public class Game {
         this.enemyPlayer = player2;
         this.gameEnded = false;
         this.gamePhase = 1;
+        this.movesLeftThisTurn = 4;
+        this.stepsBuilder = new StringBuilder();
     }
     public void setGameListener(GameListener gameListener){
         this.gameListener = gameListener;
@@ -37,15 +42,6 @@ public class Game {
 
     public GameListener getGameListener(){
         return gameListener;
-    }
-
-    public Game(){
-        this.board = new Board();
-        this.player1 = new Player(1, false);
-        this.player2 = new Player(2, false);
-        this.currentPlayer = player1;
-        this.gameEnded = false;
-        this.gamePhase = 1;
     }
 
     public Board getBoard() {
@@ -77,45 +73,70 @@ public class Game {
     }
 
     public void startGame() {
-        gameListener.onGamePhaseChanged(gamePhase);
-//        arrangePieces(player1);
-//
-//        gameListener.onGamePhaseChanged(gamePhase);
-//        arrangePieces(player2);
-//
-//        gameListener.onGamePhaseChanged(gamePhase);
-//        while (!board.hasPlayerWon(player1, player2) && !board.hasPlayerWon(player2, player1)) {
-//            // It's the current player's turn
-//            playTurn(currentPlayer);
-//
-//            // Switch to the other player
-//            currentPlayer = (currentPlayer == player1) ? player2 : player1;
-//            enemyPlayer = (enemyPlayer == player2) ? player1 : player2;
-//            gamePhase += 1;
-//            gameListener.onGamePhaseChanged(gamePhase);
-//        }
-//
-//
-//        if (board.hasPlayerWon(player1, player2)) {
-//            System.out.println("Player 1 wins!");
-//        } else {
-//            System.out.println("Player 2 wins!");
-//        }
-//        gameListener.onGameEnded(board.hasPlayerWon(player1, player2) ? player1 : player2);
     }
 
-    private void arrangePieces(Player player) {
-        // TODO: Implement the logic for a player to arrange their pieces on the board.
-        // You may want to prompt the user for input, or use an automatic arrangement
-        // based on a predefined configuration.
+
+    public void incrementPhase(){
+        if (gamePhase <= 2){
+            StringBuilder initialPositionsBuilder = new StringBuilder();
+            initialPositionsBuilder.append(createHistoryBeginningOfMovesLine());
+            for(Position position : getBoard().getPositionsOfPlayersPieces(currentPlayer)){
+                initialPositionsBuilder.append(getBoard().getPieceAt(position).toString()).append(position).append(" ");
+            }
+            String initialPositions = initialPositionsBuilder.toString();
+            System.out.print(initialPositions);
+            stepsBuilder.append(initialPositions);
+        }
+        gamePhase++;
+        switchTurn();
+        if (gamePhase >= 3){
+            String beginning = createHistoryBeginningOfMovesLine();
+            System.out.print(beginning);
+            stepsBuilder.append(beginning);
+        }
     }
 
-    private void playTurn(Player player) {
-        // TODO: Implement the logic for a player's turn.
-        // You may want to prompt the user for input, or use an AI or algorithm to
-        // generate a valid move. Be sure to validate the move with board.isValidMove(move)
-        // before executing it with board.makeMove(move).
+
+    public void switchTurn(){
+        Player newEnemyPlayer = currentPlayer;
+        currentPlayer = enemyPlayer;
+        enemyPlayer = newEnemyPlayer;
+        movesLeftThisTurn = 4;
+        stepsBuilder.append(createHistoryBeginningOfMovesLine());
     }
+
+
+
+    public int getMovesLeftThisTurn(){
+        return movesLeftThisTurn;
+    }
+
+    public void decrementMovesLeftThisTurnBy(int number){
+        movesLeftThisTurn -= number;
+        if (gameListener != null) {
+            gameListener.onMovesLeftChanged(movesLeftThisTurn);
+        }
+    }
+
+    public String createHistoryBeginningOfMovesLine(){
+        return "\n" + getStep() + String.valueOf(currentPlayer.getColor().getSmallChar()) + " ";
+    }
+
+    private int getStep(){
+        if (gamePhase % 2 == 0) {
+            return gamePhase / 2;
+        } else {
+            return (gamePhase / 2) + 1;
+        }
+    }
+
+    public void appendStepsBuilder(String string){
+        stepsBuilder.append(string);
+    }
+
+
+
+
 
 
 }
