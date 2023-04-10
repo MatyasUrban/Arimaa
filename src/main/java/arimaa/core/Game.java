@@ -7,8 +7,19 @@ public class Game {
     private final Player player1;
     private final Player player2;
     private Player currentPlayer;
+    private Player enemyPlayer;
     private Boolean gameEnded;
     private int gamePhase;
+    public static final String[][] DEFAULT_BOARD = {
+            {"r", "r", "r", "r", "r", "r", "r", "r"},
+            {"e", "m", "h", "h", "d", "d", "c", "c"},
+            {"", "", "", "", "", "", "", ""},
+            {"", "", "", "", "", "", "", ""},
+            {"", "", "", "", "", "", "", ""},
+            {"", "", "", "", "", "", "", ""},
+            {"E", "M", "H", "H", "D", "D", "C", "C"},
+            {"R", "R", "R", "R", "R", "R", "R", "R"}
+    };
 
     private GameListener gameListener;
     public Game(Player player1, Player player2) {
@@ -16,6 +27,7 @@ public class Game {
         this.player1 = player1;
         this.player2 = player2;
         this.currentPlayer = player1;
+        this.enemyPlayer = player2;
         this.gameEnded = false;
         this.gamePhase = 1;
     }
@@ -52,6 +64,10 @@ public class Game {
         return currentPlayer;
     }
 
+    public Player getEnemyPlayer(){
+        return enemyPlayer;
+    }
+
     public Boolean getGameEnded() {
         return gameEnded;
     }
@@ -62,29 +78,30 @@ public class Game {
 
     public void startGame() {
         gameListener.onGamePhaseChanged(gamePhase);
-        arrangePieces(player1);
-
-        gameListener.onGamePhaseChanged(gamePhase);
-        arrangePieces(player2);
-
-        gameListener.onGamePhaseChanged(gamePhase);
-        while (!board.hasPlayerWon(player1, player2) && !board.hasPlayerWon(player2, player1)) {
-            // It's the current player's turn
-            playTurn(currentPlayer);
-
-            // Switch to the other player
-            currentPlayer = (currentPlayer == player1) ? player2 : player1;
-            gamePhase += 1;
-            gameListener.onGamePhaseChanged(gamePhase);
-        }
-
-
-        if (board.hasPlayerWon(player1, player2)) {
-            System.out.println("Player 1 wins!");
-        } else {
-            System.out.println("Player 2 wins!");
-        }
-        gameListener.onGameEnded(board.hasPlayerWon(player1, player2) ? player1 : player2);
+//        arrangePieces(player1);
+//
+//        gameListener.onGamePhaseChanged(gamePhase);
+//        arrangePieces(player2);
+//
+//        gameListener.onGamePhaseChanged(gamePhase);
+//        while (!board.hasPlayerWon(player1, player2) && !board.hasPlayerWon(player2, player1)) {
+//            // It's the current player's turn
+//            playTurn(currentPlayer);
+//
+//            // Switch to the other player
+//            currentPlayer = (currentPlayer == player1) ? player2 : player1;
+//            enemyPlayer = (enemyPlayer == player2) ? player1 : player2;
+//            gamePhase += 1;
+//            gameListener.onGamePhaseChanged(gamePhase);
+//        }
+//
+//
+//        if (board.hasPlayerWon(player1, player2)) {
+//            System.out.println("Player 1 wins!");
+//        } else {
+//            System.out.println("Player 2 wins!");
+//        }
+//        gameListener.onGameEnded(board.hasPlayerWon(player1, player2) ? player1 : player2);
     }
 
     private void arrangePieces(Player player) {

@@ -17,16 +17,7 @@ public class CombinedGUI {
     private static LabeledBoardPanel labeledBoardPanel;
     private static JPanel currentPanel;
 
-    private static final String[][] DEFAULT_BOARD = {
-            {"r", "r", "r", "r", "r", "r", "r", "r"},
-            {"e", "m", "h", "h", "d", "d", "c", "c"},
-            {"", "", "", "", "", "", "", ""},
-            {"", "", "", "", "", "", "", ""},
-            {"", "", "", "", "", "", "", ""},
-            {"", "", "", "", "", "", "", ""},
-            {"E", "M", "H", "H", "D", "D", "C", "C"},
-            {"R", "R", "R", "R", "R", "R", "R", "R"}
-    };
+
 
     public static void changeRightPanel(JPanel newPanel) {
         frame.remove(currentPanel);
@@ -59,9 +50,9 @@ public class CombinedGUI {
             Player player2 = new Player(2, false, player2Name);
             // Multiplayer game
             Game game = new Game(player1, player2);
+            game.getBoard().populateBoardFrom2DString(Game.DEFAULT_BOARD, player1, player2);
             GameControlsPanel gameControlsPanel = new GameControlsPanel(game, labeledBoardPanel);
             game.setGameListener(gameControlsPanel);
-
             labeledBoardPanel.setBoard(game.getBoard());
             changeRightPanel(gameControlsPanel);
             game.startGame();

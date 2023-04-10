@@ -1,11 +1,15 @@
 package arimaa.gui;
 
 import arimaa.core.*;
+import arimaa.utils.BoardMode;
 import arimaa.utils.Position;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,6 +35,8 @@ class BoardPanel extends JPanel {
      */
     private final JPanel[][] squares;
 
+    private BoardMode currentMode = BoardMode.NONE;
+
 
     /**
      * Constructs a visual BoardPanel object representing the logical board.
@@ -43,6 +49,7 @@ class BoardPanel extends JPanel {
         setLayout(new GridLayout(GRID_SIZE, GRID_SIZE));
         // Create the grid
         int tileSize = 70;
+        MouseAdapter mouseAdapter = createMouseAdapter();
         for (int i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
             JPanel square = new JPanel(new BorderLayout());
             square.setPreferredSize(new Dimension(tileSize, tileSize));
@@ -50,6 +57,7 @@ class BoardPanel extends JPanel {
             int col = i % GRID_SIZE;
             squares[row][col] = square;
             square.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+            square.addMouseListener(mouseAdapter);
             add(square);
         }
         // Fill grid with default colors
@@ -73,10 +81,14 @@ class BoardPanel extends JPanel {
         resetSquaresColors();
     }
 
+    public void setBoardMode(BoardMode boardMode){
+        this.currentMode = boardMode;
+    }
+
     /**
      * Method to traverse the logical board and fill the visual grid with appropriate pictures.
      */
-    private void fillSquaresWithBoard(){
+    public void fillSquaresWithBoard(){
         for (int i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
             int row = i / GRID_SIZE;
             int col = i % GRID_SIZE;
@@ -179,7 +191,7 @@ class BoardPanel extends JPanel {
     /**
      * Method to restore the grid squares colors.
      */
-    private void resetSquaresColors() {
+    public void resetSquaresColors() {
         for (int i = 0; i < GRID_SIZE; i++) {
             for (int j = 0; j < GRID_SIZE; j++) {
                 Color squareColor = Color.LIGHT_GRAY;
@@ -224,6 +236,114 @@ class BoardPanel extends JPanel {
         fillSquaresWithBoard();
         resetSquaresColors();
     }
+
+    public Position getPositionFromSquare(JPanel square) {
+        for (int row = 0; row < GRID_SIZE; row++) {
+            for (int col = 0; col < GRID_SIZE; col++) {
+                if (squares[row][col].equals(square)) {
+                    return new Position(row, col);
+                }
+            }
+        }
+        return null;
+    }
+
+    public void addMouseListenerToSquares(MouseListener listener) {
+        for (int row = 0; row < GRID_SIZE; row++) {
+            for (int col = 0; col < GRID_SIZE; col++) {
+                squares[row][col].addMouseListener(listener);
+            }
+        }
+    }
+
+    public JPanel[][] getSquares(){
+        return squares;
+    }
+
+    public void switchPiecesMode(Game game, Player player, Runnable onFinish) {
+        ArrayList<Position> playerPiecePositions = game.getBoard().getPositionsOfPlayersPieces(player);
+        fillSquaresWithColor(playerPiecePositions, Color.WHITE);
+
+        MouseAdapter mouseAdapter = new MouseAdapter() {
+            Position selectedPosition = null;
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                JPanel square = (JPanel) e.getSource();
+                Position clickedPosition = getPositionFromSquare(square);
+                Color squareColor = square.getBackground();
+
+                if (selectedPosition == null) {
+                    if (playerPiecePositions.contains(clickedPosition)) {
+                        selectedPosition = clickedPosition;
+                        fillSquareWithColor(clickedPosition, Color.RED);
+                    }
+                } else {
+                    if (playerPiecePositions.contains(clickedPosition) && !clickedPosition.equals(selectedPosition)) {
+                        switchPieces(selectedPosition, clickedPosition);
+                        fillSquaresWithColor(playerPiecePositions, Color.WHITE);
+                        selectedPosition = null;
+                    } else {
+                        fillSquaresWithColor(playerPiecePositions, Color.WHITE);
+                        selectedPosition = null;
+                    }
+                }
+            }
+        };
+
+        for (Position position : playerPiecePositions) {
+            squares[position.row()][position.column()].addMouseListener(mouseAdapter);
+        }
+
+        onFinish.run();
+    }
+
+    private MouseAdapter createMouseAdapter() {
+        return new MouseAdapter() {
+            Position position1 = null;
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                JPanel square = (JPanel) e.getSource();
+                Position clickedPosition = getPositionFromSquare(square);
+
+                switch (currentMode) {
+                    case SWITCH:
+                        handleSwitchMode(clickedPosition);
+                        break;
+                    case STEP:
+                        // Implement logic for step mode
+                        break;
+                    case PULL:
+                        // Implement logic for pull mode
+                        break;
+                    case PUSH:
+                        // Implement logic for push mode
+                        break;
+                    default:
+                        break;
+                }
+            }
+        };
+    }
+
+    private void handleSwitchMode(Position clickedPosition){
+        // if no green squares, and the clicked one is white, set back to green
+        // if one green square, and the clicked one is white, switch, set the board to switch
+    }
+
+    private void handleStepMode(Position clickedPosition){
+        // if
+    }
+
+    private void handlePullMode(Position clickedPosition){}
+
+    private void handlePushMode(Position clickedPosition){}
+
+
+
+
+
 
 
 

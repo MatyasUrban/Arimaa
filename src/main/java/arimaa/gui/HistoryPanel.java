@@ -164,49 +164,59 @@ public class HistoryPanel extends JPanel {
      * @param end Ending index of Arimaa notation
      * @param nextMove Boolean value whether user clicked the NEXT button
      */
-    public void implementChangesFromNotation(int start, int end, boolean nextMove){
+    private void implementChangesFromNotation(int start, int end, boolean nextMove){
         boolean shouldBeInverse = !nextMove;
         // 3-letter Arimaa notation signifies insertion
         if (end - start == 3){
-            // extract info (Ra7 - place Gold rabbit on position a7)
-            String pieceString = longText.getText().substring(start, start + 1);
-            Piece piece = Piece.createPieceFromNotationWithGeneralPlayer(pieceString);
-            String positionString = longText.getText().substring(start + 1, end);
-            Position position = Position.fromString(positionString);
-            // inverse: if we inserted piece on the board, PREVIOUS button should remove it
-            if (shouldBeInverse){
-                labeledBoardPanel.removePieceAt(position);
-            } else {
-                labeledBoardPanel.placePieceAt(piece, position);
-            }
+            readPositionAndApply(start, end, shouldBeInverse);
         // 4-letter Arimaa notation signifies move or deletion
         } else if (end - start > 3){
-            // extract info (Rc3x - remove gold rabbit from trap at position c3)
-            String pieceString = longText.getText().substring(start, start + 1);
-            Piece piece = Piece.createPieceFromNotationWithGeneralPlayer(pieceString);
-            String positionString = longText.getText().substring(start + 1, end - 1);
-            Position positionFrom = Position.fromString(positionString);
-            char directionChar = longText.getText().charAt(end - 1);
-            Direction direction = Direction.fromNotation(directionChar);
-            assert positionFrom != null;
-            assert direction != null;
-            // get new position in specified direction
-            Position positionTo = positionFrom.getAdjacentPosition(direction);
-            // new direction equals the previous one is the test for removal
-            if (positionFrom.equals(positionTo)){
-                // inverse: if we removed piece from the board (by being on trap), PREVIOUS button should place it back
-                if (shouldBeInverse){
-                    labeledBoardPanel.placePieceAt(piece, positionFrom);
-                } else {
-                    labeledBoardPanel.removePieceAt(positionFrom);
-                }
-            } else {
-                // inverse: if we moved a piece, PREVIOUS button should move it from destination to start (in the opposition direction)
-                StepMove stepMove = shouldBeInverse ? new StepMove(positionTo, positionFrom) : new StepMove(positionFrom, positionTo);
-                labeledBoardPanel.movePiece(stepMove);
-            }
+            readMoveAndApply(start, end, shouldBeInverse);
         }
     }
+
+    private void readPositionAndApply(int start, int end, boolean shouldBeInverse){
+        // extract info (Ra7 - place Gold rabbit on position a7)
+        String pieceString = longText.getText().substring(start, start + 1);
+        Piece piece = Piece.createPieceFromNotationWithGeneralPlayer(pieceString);
+        String positionString = longText.getText().substring(start + 1, end);
+        Position position = Position.fromString(positionString);
+        // inverse: if we inserted piece on the board, PREVIOUS button should remove it
+        if (shouldBeInverse){
+            labeledBoardPanel.removePieceAt(position);
+        } else {
+            labeledBoardPanel.placePieceAt(piece, position);
+        }
+    }
+
+    private void readMoveAndApply(int start, int end, boolean shouldBeInverse){
+        // extract info (Rc3x - remove gold rabbit from trap at position c3)
+        String pieceString = longText.getText().substring(start, start + 1);
+        Piece piece = Piece.createPieceFromNotationWithGeneralPlayer(pieceString);
+        String positionString = longText.getText().substring(start + 1, end - 1);
+        Position positionFrom = Position.fromString(positionString);
+        char directionChar = longText.getText().charAt(end - 1);
+        Direction direction = Direction.fromNotation(directionChar);
+        assert positionFrom != null;
+        assert direction != null;
+        // get new position in specified direction
+        Position positionTo = positionFrom.getAdjacentPosition(direction);
+        // new direction equals the previous one is the test for removal
+        if (positionFrom.equals(positionTo)){
+            // inverse: if we removed piece from the board (by being on trap), PREVIOUS button should place it back
+            if (shouldBeInverse){
+                labeledBoardPanel.placePieceAt(piece, positionFrom);
+            } else {
+                labeledBoardPanel.removePieceAt(positionFrom);
+            }
+        } else {
+            // inverse: if we moved a piece, PREVIOUS button should move it from destination to start (in the opposition direction)
+            StepMove stepMove = shouldBeInverse ? new StepMove(positionTo, positionFrom) : new StepMove(positionFrom, positionTo);
+            labeledBoardPanel.movePiece(stepMove);
+        }
+
+    }
+
 
 }
 

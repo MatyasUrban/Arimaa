@@ -3,8 +3,12 @@ package arimaa.gui;
 import arimaa.core.Game;
 import arimaa.core.GameListener;
 import arimaa.core.Player;
+import arimaa.utils.BoardMode;
+import arimaa.utils.Position;
 
 import java.awt.*;
+import java.awt.event.MouseListener;
+import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
@@ -17,6 +21,9 @@ public class GameControlsPanel extends JPanel implements GameListener {
     private JLabel turnIndicator;
     private JLabel movesLeft;
     private ButtonGroup actionTypeGroup;
+
+    private JRadioButton switchButton;
+    private JRadioButton noneButton;
     private JRadioButton stepButton;
     private JRadioButton pushButton;
     private JRadioButton pullButton;
@@ -43,26 +50,32 @@ public class GameControlsPanel extends JPanel implements GameListener {
         turnIndicator.setForeground(Color.BLACK);
         movesLeft = new JLabel("Arrange your pieces");
 
+        switchButton = new JRadioButton("Switch");
+        switchButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, switchButton.getMinimumSize().height));
+        switchButton.setOpaque(true);
+        switchButton.setBackground(BoardMode.SWITCH.getColor());
+        noneButton = new JRadioButton("None");
+        noneButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, noneButton.getMinimumSize().height));
+        noneButton.setOpaque(true);
+        noneButton.setBackground(BoardMode.NONE.getColor());
         stepButton = new JRadioButton("Step");
         stepButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, stepButton.getMinimumSize().height));
-
         stepButton.setOpaque(true);
-        stepButton.setBackground(Color.ORANGE);
+        stepButton.setBackground(BoardMode.STEP.getColor());
         pushButton = new JRadioButton("Push");
         pushButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, pushButton.getMinimumSize().height));
-
         pushButton.setOpaque(true);
-        pushButton.setBackground(Color.MAGENTA);
+        pushButton.setBackground(BoardMode.PUSH.getColor());
         pullButton = new JRadioButton("Pull");
         pullButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, pullButton.getMinimumSize().height));
-
         pullButton.setOpaque(true);
-        pullButton.setBackground(Color.RED);
-
+        pullButton.setBackground(BoardMode.);
+        switchButton.setVisible(true);
+        noneButton.setVisible(true);
         stepButton.setVisible(true);
         pushButton.setVisible(true);
         pullButton.setVisible(true);
-        stepButton.setSelected(true);
+        noneButton.setSelected(true);
 
 
         actionTypeGroup = new ButtonGroup();
@@ -117,16 +130,42 @@ public class GameControlsPanel extends JPanel implements GameListener {
         group3.add(Box.createRigidArea(new Dimension(0, 5)));
         group3.add(resignButton);
         group3.add(Box.createVerticalGlue());
-        if (game.getGamePhase() < 3){
-            radioButtonsPanel.setVisible(false);
-            resignButton.setVisible(false);
-        }
+
 
         add(group1, BorderLayout.NORTH);
         add(group3, BorderLayout.CENTER);
         add(group2, BorderLayout.SOUTH);
         finishedButton.addActionListener(e -> {
-
+            if (game.getGamePhase() == 1) {
+                // Remove MouseAdapter from player's pieces
+                ArrayList<Position> playerPiecePositions = game.getBoard().getPositionsOfPlayersPieces(game.getCurrentPlayer());
+                for (Position position : playerPiecePositions) {
+                    for (MouseListener listener : labeledBoardPanel.getSquares()[position.row()][position.column()].getMouseListeners()) {
+                        labeledBoardPanel.getSquares()[position.row()][position.column()].removeMouseListener(listener);
+                    }
+                }
+                // Proceed to the next phase
+            }
+        });
+        switchButton.addActionListener(e -> {
+            labeledBoardPanel.setBoardMode(BoardMode.SWITCH);
+            labeledBoardPanel.fillSquaresWithColor(game.getBoard().getPositionsOfPlayersPieces(game.getCurrentPlayer()), Color.white);
+        });
+        noneButton.addActionListener(e -> {
+            labeledBoardPanel.setBoardMode(BoardMode.NONE);
+            labeledBoardPanel.resetSquaresColors();
+        });
+        stepButton.addActionListener(e -> {
+            labeledBoardPanel.setBoardMode(BoardMode.STEP);
+            labeledBoardPanel.fillSquaresWithColor(game.getBoard().getPositionsOfPlayersPiecesWhichCanStepMove(game.getCurrentPlayer()), Color.white);
+        });
+        pullButton.addActionListener(e -> {
+            labeledBoardPanel.setBoardMode(BoardMode.PULL);
+            labeledBoardPanel.fillSquaresWithColor(game.getBoard().getPositionsOfEnemyPiecesWhichCanBePulled(game.getCurrentPlayer(), game.getEnemyPlayer()), Color.white);
+        });
+        pushButton.addActionListener(e -> {
+            labeledBoardPanel.setBoardMode(BoardMode.PUSH);
+            labeledBoardPanel.fillSquaresWithColor(game.getBoard().getPositionsOfEnemyPiecesThatCanBePushed(game.getCurrentPlayer(), game.getEnemyPlayer()), Color.white);
         });
     }
 
@@ -134,8 +173,11 @@ public class GameControlsPanel extends JPanel implements GameListener {
 
     @Override
     public void onGamePhaseChanged(int gamePhase){
-        while (true){
-
+        Player player1 = game.getCurrentPlayer();
+        Player enemy = game.getEnemyPlayer();
+        if (gamePhase == 1){
+            labeledBoardPanel.setBoardMode(BoardMode.SWITCH);
+            switchButton.setSelected(true);
         }
     }
 

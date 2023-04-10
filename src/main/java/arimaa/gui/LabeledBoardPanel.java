@@ -1,12 +1,12 @@
 package arimaa.gui;
 
-import arimaa.core.Board;
-import arimaa.core.Piece;
-import arimaa.core.StepMove;
+import arimaa.core.*;
+import arimaa.utils.BoardMode;
 import arimaa.utils.Position;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 class LabeledBoardPanel extends JPanel {
@@ -38,6 +38,10 @@ class LabeledBoardPanel extends JPanel {
         constraints.weighty = 0;
         constraints.fill = GridBagConstraints.HORIZONTAL;
         add(createColumnLabels(), constraints);
+    }
+
+    public JPanel getBoardPanel(){
+        return boardPanel;
     }
 
 
@@ -98,6 +102,32 @@ class LabeledBoardPanel extends JPanel {
 
     public void fillSquaresWithColor(ArrayList<Position> positions, Color color){
         boardPanel.fillSquaresWithColor(positions, color);
+    }
+
+    public void fillSquareWithBoard(){
+        boardPanel.fillSquaresWithBoard();
+    }
+
+    public Position getPositionBySquare(JPanel sqaure){
+        return boardPanel.getPositionFromSquare(sqaure);
+    }
+
+    public void addMouseListenerToSquares(MouseListener mouseListener){
+        boardPanel.addMouseListenerToSquares(mouseListener);
+    }
+
+    public void switchPiecesMode(Game game, Player player, Runnable onFinish){
+        boardPanel.switchPiecesMode(game, player, onFinish);
+    }
+
+    public JPanel[][] getSquares(){
+        return boardPanel.getSquares();
+    }
+
+    public void setBoardMode(BoardMode boardMode){boardPanel.setBoardMode(boardMode);}
+
+    public void resetSquaresColors(){
+        boardPanel.resetSquaresColors();
     }
 
 }
