@@ -69,7 +69,7 @@ public class GameControlsPanel extends JPanel implements GameListener {
         pullButton = new JRadioButton("Pull");
         pullButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, pullButton.getMinimumSize().height));
         pullButton.setOpaque(true);
-        pullButton.setBackground(BoardMode.);
+        pullButton.setBackground(BoardMode.PULL.getColor());
         switchButton.setVisible(true);
         noneButton.setVisible(true);
         stepButton.setVisible(true);

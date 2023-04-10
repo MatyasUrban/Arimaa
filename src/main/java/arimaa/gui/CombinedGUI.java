@@ -117,7 +117,7 @@ public class CombinedGUI {
 
         // Set the menu bar for the JFrame
         frame.setJMenuBar(menuBar);
-        labeledBoardPanel = new LabeledBoardPanel(new Game().getBoard());
+        labeledBoardPanel = new LabeledBoardPanel(new Game());
         frame.add(labeledBoardPanel, BorderLayout.CENTER);
 
         WelcomePanel welcomePanel = new WelcomePanel();

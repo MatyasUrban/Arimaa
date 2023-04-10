@@ -13,10 +13,10 @@ class LabeledBoardPanel extends JPanel {
 
     private BoardPanel boardPanel;
 
-    public LabeledBoardPanel(Board board) {
+    public LabeledBoardPanel(Game game) {
         setLayout(new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
-        boardPanel = new BoardPanel(board);
+        boardPanel = new BoardPanel(game);
 
         constraints.gridx = 1;
         constraints.gridy = 0;
@@ -128,6 +128,10 @@ class LabeledBoardPanel extends JPanel {
 
     public void resetSquaresColors(){
         boardPanel.resetSquaresColors();
+    }
+
+    public void setGame(Game game){
+        boardPanel.setGame(game);
     }
 
 }

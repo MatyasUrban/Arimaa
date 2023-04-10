@@ -25,6 +25,9 @@ class BoardPanel extends JPanel {
      */
     private static final int GRID_SIZE = Board.BOARD_SIZE;
 
+
+
+    private Game game;
     /**
      * Instance variable: Actual logical game board object with pieces and methods.
      */
@@ -43,8 +46,9 @@ class BoardPanel extends JPanel {
      *
      * @param board Board object Position[][] filled with Piece objects and nulls.
      */
-    public BoardPanel(Board board) {
-        this.board = board;
+    public BoardPanel(Game game) {
+        this.game = game;
+        this.board = this.game.getBoard();
         squares = new JPanel[GRID_SIZE][GRID_SIZE];
         setLayout(new GridLayout(GRID_SIZE, GRID_SIZE));
         // Create the grid
@@ -81,6 +85,12 @@ class BoardPanel extends JPanel {
         resetSquaresColors();
     }
 
+    public void setGame(Game game){
+        this.game = game;
+        fillSquaresWithBoard();
+        resetSquaresColors();
+    }
+
     public void setBoardMode(BoardMode boardMode){
         this.currentMode = boardMode;
     }
@@ -93,7 +103,7 @@ class BoardPanel extends JPanel {
             int row = i / GRID_SIZE;
             int col = i % GRID_SIZE;
             Position position = new Position(row, col);
-            Piece piece = board.getPieceAt(position);
+            Piece piece = game.getBoard().getPieceAt(position);
             JPanel square = squares[row][col];
             fillPositionWithPiece(piece, square);
         }
@@ -148,7 +158,7 @@ class BoardPanel extends JPanel {
      * @param position Position the piece shall be placed at.
      */
     public void placePieceAt(Piece piece, Position position) {
-        board.placePiece(piece, position);
+        game.getBoard().placePiece(piece, position);
         fillSquaresWithBoard();
         resetSquaresColors();
     }
@@ -159,7 +169,7 @@ class BoardPanel extends JPanel {
      * @param position Position of the removal.
      */
     public void removePieceAt(Position position){
-        board.removePieceAt(position);
+        game.getBoard().removePieceAt(position);
         fillSquaresWithBoard();
         resetSquaresColors();
     }
@@ -170,7 +180,7 @@ class BoardPanel extends JPanel {
      * @param stepMove StepMove object with specified starting and destination positions.
      */
     public void movePiece(StepMove stepMove){
-        board.makeMove(stepMove);
+        game.getBoard().makeMove(stepMove);
         fillSquaresWithBoard();
         resetSquaresColors();
     }
@@ -183,7 +193,7 @@ class BoardPanel extends JPanel {
      * @param position2 Position of the second piece.
      */
     public void switchPieces(Position position1, Position position2){
-        board.switchPieces(position1, position2);
+        game.getBoard().switchPieces(position1, position2);
         fillSquaresWithBoard();
         resetSquaresColors();
     }
@@ -232,7 +242,7 @@ class BoardPanel extends JPanel {
      * Method to empty the logical board and the grid (remove piece icons and restore colors)
      */
     public void emptyTheBoard(){
-        board.emptyBoard();
+        game.getBoard().emptyBoard();
         fillSquaresWithBoard();
         resetSquaresColors();
     }
