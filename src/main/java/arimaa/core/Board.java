@@ -316,6 +316,7 @@ public class Board {
         return stepMoveArrayList;
     }
 
+
     /**
      * Method to get all valid Step Moves for the current position, when the move is done by the enemy (pushing/pulling).
      * Used for determining, where the enemy can push/pull this piece.
@@ -410,12 +411,13 @@ public class Board {
      */
     public ArrayList<Position> getPositionsOfEnemyPiecesWhichCanBePulled(Player player, Player enemy){
         ArrayList<Position> enemyPiecesPositions = getPositionsOfPlayersPieces(enemy);
+        ArrayList<Position> pullablePositions = new ArrayList<>();
         for (Position onePosition : enemyPiecesPositions){
             if (canBePulled(onePosition)){
-                enemyPiecesPositions.add(onePosition);
+                pullablePositions.add(onePosition);
             }
         }
-        return enemyPiecesPositions;
+        return pullablePositions;
     }
 
     /**
@@ -472,12 +474,13 @@ public class Board {
      */
     public ArrayList<Position> getPositionsOfEnemyPiecesThatCanBePushed(Player player, Player enemy){
         ArrayList<Position> enemyPiecesPositions = getPositionsOfPlayersPieces(enemy);
+        ArrayList<Position> pushablePositions = new ArrayList<>();
         for (Position onePosition : enemyPiecesPositions){
             if (canBePushed(onePosition)){
-                enemyPiecesPositions.add(onePosition);
+                pushablePositions.add(onePosition);
             }
         }
-        return enemyPiecesPositions;
+        return pushablePositions;
     }
 
     /**

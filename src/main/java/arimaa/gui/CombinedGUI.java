@@ -53,7 +53,7 @@ public class CombinedGUI {
             game.getBoard().populateBoardFrom2DString(Game.DEFAULT_BOARD, player1, player2);
             GameControlsPanel gameControlsPanel = new GameControlsPanel(game, labeledBoardPanel);
             game.setGameListener(gameControlsPanel);
-            labeledBoardPanel.setBoard(game.getBoard());
+            labeledBoardPanel.setGame(game);
             changeRightPanel(gameControlsPanel);
             game.startGame();
 

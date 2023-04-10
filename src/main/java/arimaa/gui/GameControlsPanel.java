@@ -79,6 +79,8 @@ public class GameControlsPanel extends JPanel implements GameListener {
 
 
         actionTypeGroup = new ButtonGroup();
+        actionTypeGroup.add(switchButton);
+        actionTypeGroup.add(noneButton);
         actionTypeGroup.add(stepButton);
         actionTypeGroup.add(pushButton);
         actionTypeGroup.add(pullButton);
@@ -105,6 +107,10 @@ public class GameControlsPanel extends JPanel implements GameListener {
         JPanel radioButtonsPanel = new JPanel();
         radioButtonsPanel.setOpaque(false);
         radioButtonsPanel.setLayout(new BoxLayout(radioButtonsPanel, BoxLayout.Y_AXIS));
+        radioButtonsPanel.add(switchButton);
+        radioButtonsPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+        radioButtonsPanel.add(noneButton);
+        radioButtonsPanel.add(Box.createRigidArea(new Dimension(0, 5)));
         radioButtonsPanel.add(stepButton);
         radioButtonsPanel.add(Box.createRigidArea(new Dimension(0, 5)));
         radioButtonsPanel.add(pushButton);
@@ -149,23 +155,23 @@ public class GameControlsPanel extends JPanel implements GameListener {
         });
         switchButton.addActionListener(e -> {
             labeledBoardPanel.setBoardMode(BoardMode.SWITCH);
-            labeledBoardPanel.fillSquaresWithColor(game.getBoard().getPositionsOfPlayersPieces(game.getCurrentPlayer()), Color.white);
+            labeledBoardPanel.handleModeReset();
         });
         noneButton.addActionListener(e -> {
             labeledBoardPanel.setBoardMode(BoardMode.NONE);
-            labeledBoardPanel.resetSquaresColors();
+            labeledBoardPanel.handleModeReset();
         });
         stepButton.addActionListener(e -> {
             labeledBoardPanel.setBoardMode(BoardMode.STEP);
-            labeledBoardPanel.fillSquaresWithColor(game.getBoard().getPositionsOfPlayersPiecesWhichCanStepMove(game.getCurrentPlayer()), Color.white);
+            labeledBoardPanel.handleModeReset();
         });
         pullButton.addActionListener(e -> {
             labeledBoardPanel.setBoardMode(BoardMode.PULL);
-            labeledBoardPanel.fillSquaresWithColor(game.getBoard().getPositionsOfEnemyPiecesWhichCanBePulled(game.getCurrentPlayer(), game.getEnemyPlayer()), Color.white);
+            labeledBoardPanel.handleModeReset();
         });
         pushButton.addActionListener(e -> {
             labeledBoardPanel.setBoardMode(BoardMode.PUSH);
-            labeledBoardPanel.fillSquaresWithColor(game.getBoard().getPositionsOfEnemyPiecesThatCanBePushed(game.getCurrentPlayer(), game.getEnemyPlayer()), Color.white);
+            labeledBoardPanel.handleModeReset();
         });
     }
 

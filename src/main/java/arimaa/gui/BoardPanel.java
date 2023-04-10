@@ -14,6 +14,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 /**
  * The BoardPanel class defines outlook and behavior of visual board grid.
@@ -179,8 +180,26 @@ class BoardPanel extends JPanel {
      *
      * @param stepMove StepMove object with specified starting and destination positions.
      */
+    public void stepMovePiece(StepMove stepMove){
+        game.getBoard().makeMove(stepMove);
+        fillSquaresWithBoard();
+        resetSquaresColors();
+    }
+
     public void movePiece(StepMove stepMove){
         game.getBoard().makeMove(stepMove);
+        fillSquaresWithBoard();
+        resetSquaresColors();
+    }
+
+    public void pullMovePieces(PullMove pullMove){
+        game.getBoard().makeMove(pullMove);
+        fillSquaresWithBoard();
+        resetSquaresColors();
+    }
+
+    public void pushMovePieces(PushMove pushMove){
+        game.getBoard().makeMove(pushMove);
         fillSquaresWithBoard();
         resetSquaresColors();
     }
@@ -236,6 +255,19 @@ class BoardPanel extends JPanel {
         for(Position position : positions){
             fillSquareWithColor(position, color);
         }
+    }
+
+    public ArrayList<Position> getPositionsOfSquaresWithColor(Color color){
+        ArrayList<Position> positionArrayList = new ArrayList<>();
+        for (int i = 0; i < GRID_SIZE; i++) {
+            for (int j = 0; j < GRID_SIZE; j++) {
+                Color squareColor = squares[i][j].getBackground();
+                if (squareColor == color){
+                    positionArrayList.add(new Position(i, j));
+                }
+            }
+        }
+        return positionArrayList;
     }
 
     /**
@@ -310,25 +342,29 @@ class BoardPanel extends JPanel {
 
     private MouseAdapter createMouseAdapter() {
         return new MouseAdapter() {
-            Position position1 = null;
+            Position position = null;
 
             @Override
             public void mouseClicked(MouseEvent e) {
                 JPanel square = (JPanel) e.getSource();
                 Position clickedPosition = getPositionFromSquare(square);
-
+                if (clickedOnWrongSquare(square)) {
+                    handleModeReset();
+                    return;
+                }
+                ArrayList<Position> positionArrayList = getPositionsOfSquaresWithColor(currentMode.getColor());
                 switch (currentMode) {
                     case SWITCH:
-                        handleSwitchMode(clickedPosition);
+                        handleSwitchMode(clickedPosition, positionArrayList);
                         break;
                     case STEP:
-                        // Implement logic for step mode
+                        handleStepMode(clickedPosition, positionArrayList);
                         break;
                     case PULL:
-                        // Implement logic for pull mode
+                        handlePullMode(clickedPosition, positionArrayList);
                         break;
                     case PUSH:
-                        // Implement logic for push mode
+                        handlePushMode(clickedPosition, positionArrayList);
                         break;
                     default:
                         break;
@@ -337,18 +373,102 @@ class BoardPanel extends JPanel {
         };
     }
 
-    private void handleSwitchMode(Position clickedPosition){
-        // if no green squares, and the clicked one is white, set back to green
-        // if one green square, and the clicked one is white, switch, set the board to switch
+
+    private void handleSwitchMode(Position squarePosition, ArrayList<Position> selectedPositions){
+        if (selectedPositions.size() == 0) {
+            fillSquareWithColor(squarePosition, currentMode.getColor());
+        } else if (selectedPositions.size() == 1){
+            switchPieces(selectedPositions.get(0), squarePosition);
+            handleModeReset();
+        }
     }
 
-    private void handleStepMode(Position clickedPosition){
-        // if
+    private boolean clickedOnWrongSquare(JPanel square){
+        Color color = square.getBackground();
+        return color == Color.LIGHT_GRAY || color == Color.DARK_GRAY || color == currentMode.getColor();
     }
 
-    private void handlePullMode(Position clickedPosition){}
+    private void handleStepMode(Position squarePosition, ArrayList<Position> selectedPositions){
+        if (selectedPositions.size() == 0){
+            resetSquaresColors();
+            fillSquareWithColor(squarePosition, currentMode.getColor());
+            fillSquaresWithColor((ArrayList<Position>) game.getBoard().getValidStepMovesByItselfForPosition(squarePosition).stream().map(StepMove::getTo).collect(Collectors.toList()), Color.WHITE);
+        } else if (selectedPositions.size() == 1){
+            stepMovePiece(new StepMove(selectedPositions.get(0), squarePosition));
+            checkTraps();
+            handleModeReset();
+        }
+    }
 
-    private void handlePushMode(Position clickedPosition){}
+    private void handlePullMode(Position squarePosition, ArrayList<Position> selectedPositions){
+        if (selectedPositions.size() == 0){
+            resetSquaresColors();
+            fillSquareWithColor(squarePosition, currentMode.getColor());
+            fillSquaresWithColor(game.getBoard().getPositionsOfPossiblePullingPieces(squarePosition), Color.WHITE);
+        } else if (selectedPositions.size() == 1){
+            resetSquaresColors();
+            selectedPositions.add(squarePosition);
+            fillSquaresWithColor(selectedPositions, currentMode.getColor());
+            fillSquaresWithColor((ArrayList<Position>) game.getBoard().getValidPullMovesForPullerAndPulled(squarePosition, selectedPositions.get(0)).stream().map(PullMove::getTo).collect(Collectors.toList()), Color.WHITE);
+        } else if (selectedPositions.size() == 2){
+            Position pulledPiecePosition = null;
+            Position pullingPiecePosition = null;
+            for (Position position : selectedPositions){
+                if (game.getBoard().getPieceAt(position).owner() == game.getCurrentPlayer()){
+                    pullingPiecePosition = position;
+                } else {
+                    pulledPiecePosition = position;
+                }
+            }
+            pullMovePieces(new PullMove(pullingPiecePosition, squarePosition, pulledPiecePosition, pullingPiecePosition));
+            checkTraps();
+            handleModeReset();
+        }
+    }
+
+    private void handlePushMode(Position squarePosition, ArrayList<Position> selectedPositions){
+        if (selectedPositions.size() == 0){
+            resetSquaresColors();
+            fillSquareWithColor(squarePosition, currentMode.getColor());
+            fillSquaresWithColor(game.getBoard().getPositionsOfPossiblePushingPieces(squarePosition), Color.WHITE);
+        } else if (selectedPositions.size() == 1){
+            resetSquaresColors();
+            selectedPositions.add(squarePosition);
+            fillSquaresWithColor(selectedPositions, currentMode.getColor());
+            fillSquaresWithColor((ArrayList<Position>) game.getBoard().getValidPushMovesForPusherAndPushed(squarePosition, selectedPositions.get(0)).stream().map(PushMove::getPushedPieceTo).collect(Collectors.toList()), Color.WHITE);
+        } else if (selectedPositions.size() == 2){
+            Position pushedPiecePosition = null;
+            Position pushingPiecePosition = null;
+            for (Position position : selectedPositions){
+                if (game.getBoard().getPieceAt(position).owner() == game.getCurrentPlayer()){
+                    pushingPiecePosition = position;
+                } else {
+                    pushedPiecePosition = position;
+                }
+            }
+            pushMovePieces(new PushMove(pushingPiecePosition, pushedPiecePosition, pushedPiecePosition, squarePosition));
+            checkTraps();
+            handleModeReset();
+        }
+    }
+
+    public void handleModeReset(){
+        resetSquaresColors();
+        switch (currentMode){
+            case SWITCH -> fillSquaresWithColor(game.getBoard().getPositionsOfPlayersPieces(game.getCurrentPlayer()), Color.WHITE);
+            case STEP -> fillSquaresWithColor(game.getBoard().getPositionsOfPlayersPiecesWhichCanStepMove(game.getCurrentPlayer()), Color.WHITE);
+            case PULL -> fillSquaresWithColor(game.getBoard().getPositionsOfEnemyPiecesWhichCanBePulled(game.getCurrentPlayer(), game.getEnemyPlayer()), Color.WHITE);
+            case PUSH -> fillSquaresWithColor(game.getBoard().getPositionsOfEnemyPiecesThatCanBePushed(game.getCurrentPlayer(), game.getEnemyPlayer()), Color.WHITE);
+        }
+    }
+
+    private void checkTraps(){
+        for(Position position : Position.TRAP_POSITIONS){
+            if (game.getBoard().getPieceAt(position) != null && !game.getBoard().isFriendlyPieceNearby(position)){
+                removePieceAt(position);
+            }
+        }
+    }
 
 
 

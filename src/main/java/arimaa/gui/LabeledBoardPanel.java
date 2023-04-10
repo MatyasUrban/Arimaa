@@ -134,4 +134,8 @@ class LabeledBoardPanel extends JPanel {
         boardPanel.setGame(game);
     }
 
+    public void handleModeReset(){
+        boardPanel.handleModeReset();
+    }
+
 }
