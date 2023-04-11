@@ -194,7 +194,6 @@ class BoardPanel extends JPanel {
         System.out.print(moveString);
         game.appendStepsBuilder(moveString);
         game.getBoard().makeMove(stepMove);
-        game.decrementMovesLeftThisTurnBy(1);
         fillSquaresWithBoard();
         resetSquaresColors();
     }
@@ -207,32 +206,18 @@ class BoardPanel extends JPanel {
 
     public void pullMovePieces(PullMove pullMove){
         StepMove pullingPieceMove = new StepMove(pullMove.getFrom(), pullMove.getTo());
-        String pullingPieceMoveString = game.getBoard().getPieceAt(pullingPieceMove.getFrom()).toString() + pullingPieceMove + " ";
-        System.out.print(pullingPieceMoveString);
-        game.appendStepsBuilder(pullingPieceMoveString);
+        stepMovePiece(pullingPieceMove);
+        checkTraps();
         StepMove pulledPieceMove = new StepMove(pullMove.getPulledPieceFrom(), pullMove.getPulledPieceTo());
-        String pulledPieceMoveString = game.getBoard().getPieceAt(pulledPieceMove.getFrom()).toString() + pulledPieceMove + pullMove.getPulledPieceDirection().getNotation() + " ";
-        System.out.print(pulledPieceMoveString);
-        game.appendStepsBuilder(pulledPieceMoveString);
-        game.getBoard().makeMove(pullMove);
-        game.decrementMovesLeftThisTurnBy(2);
-        fillSquaresWithBoard();
-        resetSquaresColors();
+        stepMovePiece(pulledPieceMove);
     }
 
     public void pushMovePieces(PushMove pushMove){
         StepMove pushedPieceMove = new StepMove(pushMove.getPushedPieceFrom(), pushMove.getPushedPieceTo());
-        String pushedPieceMoveString = game.getBoard().getPieceAt(pushedPieceMove.getFrom()).toString() + pushedPieceMove + pushMove.getPushedPieceDirection().getNotation() + " ";
-        System.out.print(pushedPieceMoveString);
-        game.appendStepsBuilder(pushedPieceMoveString);
+        stepMovePiece(pushedPieceMove);
+        checkTraps();
         StepMove pushingPieceMove = new StepMove(pushMove.getFrom(), pushMove.getTo());
-        String pushingPieceMoveString = game.getBoard().getPieceAt(pushingPieceMove.getFrom()).toString() + pushingPieceMove + " ";
-        System.out.print(pushingPieceMoveString);
-        game.appendStepsBuilder(pushingPieceMoveString);
-        game.getBoard().makeMove(pushMove);
-        game.decrementMovesLeftThisTurnBy(2);
-        fillSquaresWithBoard();
-        resetSquaresColors();
+        stepMovePiece(pushingPieceMove);
     }
 
     /**
@@ -430,6 +415,8 @@ class BoardPanel extends JPanel {
             stepMovePiece(new StepMove(selectedPositions.get(0), squarePosition));
             checkTraps();
             handleModeReset();
+            game.checkWinning();
+            game.decrementMovesLeftThisTurnBy(1);
         }
     }
 
@@ -456,6 +443,8 @@ class BoardPanel extends JPanel {
             pullMovePieces(new PullMove(pullingPiecePosition, squarePosition, pulledPiecePosition, pullingPiecePosition));
             checkTraps();
             handleModeReset();
+            game.checkWinning();
+            game.decrementMovesLeftThisTurnBy(2);
         }
     }
 
@@ -482,6 +471,8 @@ class BoardPanel extends JPanel {
             pushMovePieces(new PushMove(pushingPiecePosition, pushedPiecePosition, pushedPiecePosition, squarePosition));
             checkTraps();
             handleModeReset();
+            game.checkWinning();
+            game.decrementMovesLeftThisTurnBy(2);
         }
     }
 
@@ -498,7 +489,8 @@ class BoardPanel extends JPanel {
     private void checkTraps(){
         for(Position position : Position.TRAP_POSITIONS){
             if (game.getBoard().getPieceAt(position) != null && !game.getBoard().isFriendlyPieceNearby(position)){
-                removeMovePiece(new StepMove(position, position));
+                stepMovePiece(new StepMove(position, position));
+                removePieceAt(position);
             }
         }
     }

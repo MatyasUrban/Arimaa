@@ -9,6 +9,8 @@ public class Game {
     private Player currentPlayer;
     private Player enemyPlayer;
     private Boolean gameEnded;
+
+    private Player winner;
     private int gamePhase;
     private final StringBuilder stepsBuilder;
 
@@ -35,6 +37,7 @@ public class Game {
         this.gamePhase = 1;
         this.movesLeftThisTurn = 4;
         this.stepsBuilder = new StringBuilder();
+        this.winner = null;
     }
     public void setGameListener(GameListener gameListener){
         this.gameListener = gameListener;
@@ -77,9 +80,11 @@ public class Game {
 
 
     public void incrementPhase(){
+        if (gamePhase == 1){
+            stepsBuilder.append(createHistoryBeginningOfMovesLine());
+        }
         if (gamePhase <= 2){
             StringBuilder initialPositionsBuilder = new StringBuilder();
-            initialPositionsBuilder.append(createHistoryBeginningOfMovesLine());
             for(Position position : getBoard().getPositionsOfPlayersPieces(currentPlayer)){
                 initialPositionsBuilder.append(getBoard().getPieceAt(position).toString()).append(position).append(" ");
             }
@@ -89,11 +94,6 @@ public class Game {
         }
         gamePhase++;
         switchTurn();
-        if (gamePhase >= 3){
-            String beginning = createHistoryBeginningOfMovesLine();
-            System.out.print(beginning);
-            stepsBuilder.append(beginning);
-        }
     }
 
 
@@ -102,7 +102,9 @@ public class Game {
         currentPlayer = enemyPlayer;
         enemyPlayer = newEnemyPlayer;
         movesLeftThisTurn = 4;
-        stepsBuilder.append(createHistoryBeginningOfMovesLine());
+        String beginning = createHistoryBeginningOfMovesLine();
+        System.out.print(beginning);
+        stepsBuilder.append(beginning);
     }
 
 
@@ -115,6 +117,16 @@ public class Game {
         movesLeftThisTurn -= number;
         if (gameListener != null) {
             gameListener.onMovesLeftChanged(movesLeftThisTurn);
+        }
+    }
+
+    public void checkWinning(){
+        boolean player1won = board.hasPlayerWon(player1, player2);
+        boolean player2won = board.hasPlayerWon(player2, player1);
+        if (player1won || player2won){
+            winner = player1won ? player1 : player2;
+            gameEnded = true;
+            gameListener.onGameEnded(winner);
         }
     }
 
@@ -132,6 +144,20 @@ public class Game {
 
     public void appendStepsBuilder(String string){
         stepsBuilder.append(string);
+    }
+
+    public void endGame(){
+        winner = enemyPlayer;
+        gameEnded = true;
+        gameListener.onGameEnded(winner);
+    }
+
+    public Player getWinner(){
+        return winner;
+    }
+
+    public String getStepsString(){
+        return stepsBuilder.toString();
     }
 
 

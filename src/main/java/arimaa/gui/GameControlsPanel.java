@@ -2,13 +2,22 @@ package arimaa.gui;
 
 import arimaa.core.Game;
 import arimaa.core.GameListener;
+import arimaa.core.Player;
 import arimaa.utils.BoardMode;
+import arimaa.utils.GameClock;
 
 import java.awt.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class GameControlsPanel extends JPanel implements GameListener {
+
 
     private JLabel playerTopName;
     private JLabel playerTopTime;
@@ -26,12 +35,15 @@ public class GameControlsPanel extends JPanel implements GameListener {
 
     private JButton finishedButton;
     private JButton resignButton;
+    private JButton saveButton;
 
     private final Game game;
 
     private final LabeledBoardPanel labeledBoardPanel;
 
     private final JPanel group3;
+
+    GameClock gameClock;
 
     public GameControlsPanel(Game game, LabeledBoardPanel labeledBoardPanel) {
         this.game = game;
@@ -87,6 +99,8 @@ public class GameControlsPanel extends JPanel implements GameListener {
         finishedButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, finishedButton.getMinimumSize().height));
         resignButton = new JButton("Resign");
         resignButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, resignButton.getMinimumSize().height));
+        saveButton = new JButton("Save Game State");
+        saveButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, saveButton.getMinimumSize().height));
 
 
 
@@ -127,17 +141,25 @@ public class GameControlsPanel extends JPanel implements GameListener {
         group3.add(finishedButton);
         group3.add(Box.createRigidArea(new Dimension(0, 5)));
         group3.add(resignButton);
+        group3.add(Box.createRigidArea(new Dimension(0, 5)));
+        group3.add(saveButton);
         group3.add(Box.createVerticalGlue());
         add(group1, BorderLayout.NORTH);
         add(group3, BorderLayout.CENTER);
         add(group2, BorderLayout.SOUTH);
         setTurnFormatting();
+        gameClock = new GameClock(this, game);
         finishedButton.addActionListener(e -> {
             labeledBoardPanel.resetSquaresColors();
             labeledBoardPanel.setBoardMode(BoardMode.NONE);
             labeledBoardPanel.handleModeReset();
             game.incrementPhase();
+            if (game.getGamePhase() == 3){
+
+                gameClock.start();
+            }
             setTurnFormatting();
+
         });
         switchButton.addActionListener(e -> {
             labeledBoardPanel.setBoardMode(BoardMode.SWITCH);
@@ -159,7 +181,29 @@ public class GameControlsPanel extends JPanel implements GameListener {
             labeledBoardPanel.setBoardMode(BoardMode.PUSH);
             labeledBoardPanel.handleModeReset();
         });
+        resignButton.addActionListener(e -> {
+            game.endGame();
+        });
+        saveButton.addActionListener(e -> {
+            gameClock.pauseClock();
+            Date currentDate = new Date();
+            saveToFile(gameToString(currentDate), currentDate);
+            if (!game.getGameEnded()){
+                gameClock.resumeClock();
+            }
+        });
     }
+
+    public void updatePlayerTopTime(String time) {
+        SwingUtilities.invokeLater(() -> playerTopTime.setText(time));
+    }
+
+    public void updatePlayerBottomTime(String time) {
+        SwingUtilities.invokeLater(() -> playerBottomTime.setText(time));
+    }
+
+
+
 
     private void setTurnFormatting(){
         Color turnColor;
@@ -178,6 +222,8 @@ public class GameControlsPanel extends JPanel implements GameListener {
             pushButton.setVisible(false);
             pullButton.setVisible(false);
             noneButton.setSelected(true);
+            resignButton.setVisible(false);
+            saveButton.setVisible(false);
         } else {
             movesLeftTextPanel.setText("4 moves left");
             switchButton.setVisible(false);
@@ -186,6 +232,8 @@ public class GameControlsPanel extends JPanel implements GameListener {
             pushButton.setVisible(true);
             pullButton.setVisible(true);
             noneButton.setSelected(true);
+            resignButton.setVisible(true);
+            saveButton.setVisible(true);
         }
         group3.setBackground(turnColor);
     }
@@ -195,10 +243,12 @@ public class GameControlsPanel extends JPanel implements GameListener {
     @Override
     public void onMovesLeftChanged(int movesLeft){
         if(game.getMovesLeftThisTurn() > 0){
-            movesLeftTextPanel.setText(movesLeft + " moves lemoves left");
             if (game.getMovesLeftThisTurn() < 2){
                 pushButton.setVisible(false);
                 pullButton.setVisible(false);
+                movesLeftTextPanel.setText(movesLeft + " move left");
+            } else {
+                movesLeftTextPanel.setText(movesLeft + " moves left");
             }
         } else {
             labeledBoardPanel.resetSquaresColors();
@@ -208,6 +258,80 @@ public class GameControlsPanel extends JPanel implements GameListener {
             setTurnFormatting();
         }
     }
+
+    public void saveToFile(String content, Date date) {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Choose a location to save the file");
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Text files", "txt");
+        fileChooser.setFileFilter(filter);
+
+        // Set the default file name with the current date and time
+        SimpleDateFormat fileNameDateFormat = new SimpleDateFormat("dd-MM-yyyy-HH-mm-ss");
+        String defaultFileName = "arimaa-" + fileNameDateFormat.format(date) + ".txt";
+        fileChooser.setSelectedFile(new File(defaultFileName));
+
+        int userSelection = fileChooser.showSaveDialog(this);
+
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = fileChooser.getSelectedFile();
+
+            // Add .txt extension if not provided by the user
+            if (!fileToSave.getAbsolutePath().endsWith(".txt")) {
+                fileToSave = new File(fileToSave.getAbsolutePath() + ".txt");
+            }
+
+            try (FileWriter fileWriter = new FileWriter(fileToSave)) {
+                fileWriter.write(content);
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(this, "Error saving file: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
+    }
+
+    public String gameToString(Date date) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        String currentDate = dateFormat.format(date);
+        String gameState = "Game state as of: " + currentDate + "\n";
+        String yellowInfo = "Yellow (g): " + game.getPlayer1().getPlayerName() + "\n";
+        String yellowTime = "Yellow time: " + playerBottomTime.getText() + "\n";
+        String blueInfo = "Blue (s): " + game.getPlayer2().getPlayerName() + "\n";
+        String blueTime = "Blue time: " + playerTopTime.getText() + "\n";
+        String steps = game.getStepsString();
+
+        String result;
+        if (!game.getGameEnded()) {
+            result = "Result: 0-0\n";
+        } else {
+            result = game.getWinner() == game.getPlayer1() ? "Result: 1-0" : "Result: 0-1";
+        }
+
+        return gameState + yellowInfo + yellowTime + blueInfo + blueTime + result + steps;
+    }
+
+
+
+    @Override
+    public void onGameEnded(Player winner){
+        gameClock.stopClock();
+        labeledBoardPanel.setBoardMode(BoardMode.NONE);
+        labeledBoardPanel.handleModeReset();
+        noneButton.setVisible(false);
+        stepButton.setVisible(false);
+        pushButton.setVisible(false);
+        pullButton.setVisible(false);
+        finishedButton.setVisible(false);
+        resignButton.setVisible(false);
+        movesLeftTextPanel.setVisible(false);
+        turnIndicatorTextPanel.setText(winner.getPlayerName() + " won!");
+        showWinnerPopup(winner);
+    }
+
+    public void showWinnerPopup(Player winner) {
+        String message = winner.getPlayerName() + " won. Congratulations!";
+        JOptionPane.showMessageDialog(this, message, "Game Over", JOptionPane.INFORMATION_MESSAGE);
+    }
+
 
 
     private JLabel createColoredLabel(String text, Color color, int fontSize) {
