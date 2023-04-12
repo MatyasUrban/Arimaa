@@ -1,7 +1,6 @@
 package arimaa.gui;
 
 import arimaa.core.*;
-import arimaa.utils.BoardMode;
 import arimaa.utils.Position;
 
 import javax.swing.*;

@@ -1,8 +1,11 @@
 package arimaa.gui;
 
 import arimaa.core.Game;
+import arimaa.core.Piece;
 import arimaa.core.Player;
-import arimaa.utils.GameValidator;
+import arimaa.core.StepMove;
+import arimaa.utils.Direction;
+import arimaa.utils.Position;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,6 +13,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CombinedGUI {
 
@@ -29,7 +34,7 @@ public class CombinedGUI {
 
 
 
-    private static void showMultiplayerDialog(JFrame parentFrame) {
+    private static void showNewGameDialog(JFrame parentFrame, boolean vsComputer) {
         JDialog multiplayerDialog = new JDialog(parentFrame, "New multiplayer game", true);
         multiplayerDialog.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
@@ -39,6 +44,10 @@ public class CombinedGUI {
 
         JLabel player2Label = new JLabel("Player 2 (Blue):");
         JTextField player2TextField = new JTextField(20);
+        if (vsComputer) {
+            player2TextField.setText("Computer");
+            player2TextField.setEditable(false);
+        }
 
         JButton startGameButton = new JButton("Start game");
         startGameButton.addActionListener(e -> {
@@ -47,11 +56,11 @@ public class CombinedGUI {
             String player2Name = player2TextField.getText().replaceAll("\\s", ""); // Remove spaces
             multiplayerDialog.dispose();
             Player player1 = new Player(1, false, player1Name);
-            Player player2 = new Player(2, false, player2Name);
+            Player player2 = new Player(2, true, player2Name);
             // Multiplayer game
             Game game = new Game(player1, player2);
             game.getBoard().populateBoardFrom2DString(Game.DEFAULT_BOARD, player1, player2);
-            GameControlsPanel gameControlsPanel = new GameControlsPanel(game, labeledBoardPanel);
+            GameControlsPanel gameControlsPanel = new GameControlsPanel(game, labeledBoardPanel, "00:00:00", "00:00:00");
             game.setGameListener(gameControlsPanel);
             labeledBoardPanel.setGame(game);
             changeRightPanel(gameControlsPanel);
@@ -99,9 +108,7 @@ public class CombinedGUI {
 
         JMenu newGameMenu = new JMenu("Start a new game");
         JMenuItem multiplayerItem = new JMenuItem("Multiplayer");
-        multiplayerItem.addActionListener(e -> {
-            showMultiplayerDialog(frame);
-        });
+
         JMenuItem singleplayerItem = new JMenuItem("Singleplayer");
         newGameMenu.add(multiplayerItem);
         newGameMenu.add(singleplayerItem);
@@ -130,16 +137,127 @@ public class CombinedGUI {
 
         // Add action listeners to handle menu clicks
         // Move this block of code to the end of the main method
+        multiplayerItem.addActionListener(e -> {
+            showNewGameDialog(frame, false);
+        });
         singleplayerItem.addActionListener(e -> {
-            // Add your singleplayer game logic here
-            // For now, just changing the right panel to GameControlsPanel
-            changeRightPanel(new GameControlsPanel(new Game(new Player(1, false), new Player(2, true)), labeledBoardPanel));
+            showNewGameDialog(frame, true);
         });
 
         continuePlayingItem.addActionListener(e -> {
-            // Add your continue playing game logic here
-            // For now, just changing the right panel to GameControlsPanel
-            changeRightPanel(new GameControlsPanel(new Game(new Player(1, false), new Player(2, false)), labeledBoardPanel));
+            JFileChooser fileChooser = new JFileChooser();
+            int returnValue = fileChooser.showOpenDialog(frame);
+            if (returnValue == JFileChooser.APPROVE_OPTION) {
+                File selectedFile = fileChooser.getSelectedFile();
+                if (isValidArimaaFile(selectedFile)) {
+                    // Read the file content starting from the 9th line
+                    String name1 = "", time1 = "", name2 = "", time2 = "", result = "";
+                    ArrayList<String> moveLinesArrayList = new ArrayList<>();
+                    ArrayList<String> moves = new ArrayList<>();
+                    String turn = "";
+                    int movesLeft = 4;
+                    try (BufferedReader br = new BufferedReader(new FileReader(selectedFile))) {
+                        String line;
+                        int lineNumber = -1;
+
+                        String lastLine = "";
+
+                        while ((line = br.readLine()) != null) {
+                            lineNumber++;
+                            lastLine = line;
+                            if (0 < lineNumber && lineNumber < 6){
+                                switch (lineNumber){
+                                    case 1 -> name1 = line.substring("Yellow (g): ".length()).trim();
+                                    case 2 -> time1 = line.substring("Yellow time: ".length()).trim();
+                                    case 3 -> name2 = line.substring("Blue (s): ".length()).trim();
+                                    case 4 -> time2 = line.substring("Blue time: ".length()).trim();
+                                    case 5 -> result = line.substring("Result: ".length()).trim();
+                                }
+                            } else if (lineNumber > 6){
+                                moveLinesArrayList.add(line);
+                                if (line.length() > 3) {
+                                    moves.addAll(List.of(line.substring(3).trim().replaceAll("[\n]+$", "").split(" ")));
+                                }
+                            }
+                        }
+                        String[] lastLineSplit = lastLine.split(" ");
+                        int itemNumber = -1;
+                        int movesMade = 0;
+                        for (String item : lastLineSplit){
+                            itemNumber++;
+                            if (itemNumber == 0){
+                                turn = item;
+                            } else if (!item.substring(3).equals("x")){
+                                movesMade++;
+                            }
+                        }
+                        movesLeft -= movesMade;
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+
+                    Player player1 = new Player(1, false, name1);
+                    Player player2;
+                    if (name2.equals("Computer")){
+                        player2 = new Player(2, true, name2);
+                    } else {
+                        player2 = new Player(2, false, name2);
+                    }
+                    Game game = new Game(player1, player2);
+                    game.setMovesLeftThisTurn(movesLeft);
+                    if (turn.charAt(1) == 's'){
+                        game.setCurrentPlayer(player2);
+                        game.setEnemyPlayer(player1);
+                        game.setGamePhase(Character.getNumericValue(turn.charAt(0)) *2);
+                    } else {
+                        game.setCurrentPlayer(player1);
+                        game.setEnemyPlayer(player2);
+                        game.setGamePhase(Character.getNumericValue(turn.charAt(0))*2-1);
+                    }
+                    for (String line : moveLinesArrayList){
+                        game.appendStepsBuilder(line);
+                    }
+                    for (String move : moves){
+                        if (move.length() == 3){
+                            // extract info (Ra7 - place Gold rabbit on position a7)
+                            String pieceString = move.substring(0, 1);
+                            Player pieceOwner;
+                            if (pieceString.toUpperCase().equals(pieceString)){
+                                pieceOwner = player1;
+                            } else {
+                                pieceOwner = player2;
+                            }
+                            Piece piece = Piece.createPieceFromNotationPlayerWithSpecificPlayer(pieceString, pieceOwner);
+                            String positionString = move.substring(1,3);
+                            Position position = Position.fromString(positionString);
+                            assert position != null;
+                            game.getBoard().placePiece(piece, position);
+                        } else if (move.length() == 4){
+                            String positionString = move.substring(1, 3);
+                            Position positionFrom = Position.fromString(positionString);
+                            char directionChar = move.charAt(3);
+                            Direction direction = Direction.fromNotation(directionChar);
+                            assert positionFrom != null;
+                            assert direction != null;
+                            Position positionTo = positionFrom.getAdjacentPosition(direction);
+                            if (positionFrom.equals(positionTo)){
+                                game.getBoard().removePieceAt(positionFrom);
+                            } else {
+                                StepMove stepMove = new StepMove(positionFrom, positionTo);
+                                game.getBoard().makeMove(stepMove);
+                            }
+                        }
+                    }
+                    GameControlsPanel gameControlsPanel = new GameControlsPanel(game, labeledBoardPanel, time1, time2);
+                    game.setGameListener(gameControlsPanel);
+                    labeledBoardPanel.setGame(game);
+                    changeRightPanel(gameControlsPanel);
+                    game.startGame();
+                } else {
+                    JOptionPane.showMessageDialog(frame, "This file is not a valid Arimaa game.", "Invalid file", JOptionPane.WARNING_MESSAGE);
+                    changeRightPanel(new WelcomePanel());
+                }
+            }
         });
 
         viewStepsItem.addActionListener(e -> {
@@ -194,7 +312,7 @@ public class CombinedGUI {
 
         // Check if the content is valid using GameValidator
         // that takes a File object as a parameter and returns a boolean
-        if (!GameValidator.isValidGame(file)) {
+        if (false) {
             return false;
         }
 

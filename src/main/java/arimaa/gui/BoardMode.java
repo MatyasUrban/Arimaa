@@ -1,4 +1,4 @@
-package arimaa.utils;
+package arimaa.gui;
 
 import java.awt.Color;
 

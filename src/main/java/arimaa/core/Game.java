@@ -160,6 +160,22 @@ public class Game {
         return stepsBuilder.toString();
     }
 
+    public void setMovesLeftThisTurn(int movesLeftThisTurn) {
+        this.movesLeftThisTurn = movesLeftThisTurn;
+    }
+
+    public void setCurrentPlayer(Player player){
+        currentPlayer = player;
+    }
+
+    public void setEnemyPlayer(Player player){
+        enemyPlayer = player;
+    }
+
+    public void setGamePhase(int phase){
+        gamePhase = phase;
+    }
+
 
 
 

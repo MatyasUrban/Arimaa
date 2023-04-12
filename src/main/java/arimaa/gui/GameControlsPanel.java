@@ -3,8 +3,6 @@ package arimaa.gui;
 import arimaa.core.Game;
 import arimaa.core.GameListener;
 import arimaa.core.Player;
-import arimaa.utils.BoardMode;
-import arimaa.utils.GameClock;
 
 import java.awt.*;
 import java.io.File;
@@ -45,16 +43,16 @@ public class GameControlsPanel extends JPanel implements GameListener {
 
     GameClock gameClock;
 
-    public GameControlsPanel(Game game, LabeledBoardPanel labeledBoardPanel) {
+    public GameControlsPanel(Game game, LabeledBoardPanel labeledBoardPanel, String player1time, String player2time) {
         this.game = game;
         this.labeledBoardPanel = labeledBoardPanel;
         setLayout(new BorderLayout());
         setBorder(new EmptyBorder(0, 0, 0, 0));
 
         playerTopName = createColoredLabel("Player 2 BLUE (" + game.getPlayer2().getPlayerName() + ")", Color.CYAN, 14);
-        playerTopTime = createColoredLabel("00:00:00", Color.CYAN, 18, true);
+        playerTopTime = createColoredLabel(player2time, Color.CYAN, 18, true);
         playerBottomName = createColoredLabel("Player 1 YELLOW (" + game.getPlayer1().getPlayerName() + ")", Color.YELLOW, 14);
-        playerBottomTime = createColoredLabel("00:00:00", Color.YELLOW, 18, true);
+        playerBottomTime = createColoredLabel(player1time, Color.YELLOW, 18, true);
 
         turnIndicatorTextPanel = new JLabel("Player 1's Turn");
         turnIndicatorTextPanel.setForeground(Color.BLACK);
@@ -148,14 +146,19 @@ public class GameControlsPanel extends JPanel implements GameListener {
         add(group3, BorderLayout.CENTER);
         add(group2, BorderLayout.SOUTH);
         setTurnFormatting();
-        gameClock = new GameClock(this, game);
+        gameClock = new GameClock(this, game, player1time, player2time);
+        if (game.getGamePhase() >= 3){
+            onMovesLeftChanged(game.getMovesLeftThisTurn());
+            System.out.println("Game phase: " + game.getGamePhase());
+            gameClock.start();
+        }
         finishedButton.addActionListener(e -> {
             labeledBoardPanel.resetSquaresColors();
             labeledBoardPanel.setBoardMode(BoardMode.NONE);
             labeledBoardPanel.handleModeReset();
             game.incrementPhase();
+            System.out.println("Game phase: " + game.getGamePhase());
             if (game.getGamePhase() == 3){
-
                 gameClock.start();
             }
             setTurnFormatting();
@@ -244,6 +247,10 @@ public class GameControlsPanel extends JPanel implements GameListener {
     public void onMovesLeftChanged(int movesLeft){
         if(game.getMovesLeftThisTurn() > 0){
             if (game.getMovesLeftThisTurn() < 2){
+                if (pushButton.isSelected() || pullButton.isSelected()){
+                    labeledBoardPanel.setBoardMode(BoardMode.NONE);
+                    labeledBoardPanel.handleModeReset();
+                }
                 pushButton.setVisible(false);
                 pullButton.setVisible(false);
                 movesLeftTextPanel.setText(movesLeft + " move left");
