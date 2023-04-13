@@ -11,7 +11,8 @@ Designed, developed and programmed by  [Matyas Urban](https://www.linkedin.com/i
    1. [Javadoc](#21-javadoc)
    2. [Application Structure](#22-application-structure)
    3. [Problem Approach](#23-problem-approach)
-   4. [Technologies and Features](#24-technologies-and-features)
+   4. [Architecture Design](#24-architecture-design)
+   5. [Technologies and Features](#25-technologies-and-features)
 3. [User Manual](#user-manual)
 
 ## 1. Project Overview
@@ -67,8 +68,9 @@ I've approached the implementation of the Arimaa game by breaking down the probl
 4. Utilizing threads for managing game timers and updating the GUI accordingly.
 5. Organizing the code into separate packages for better maintainability and readability.
 By following these steps, I've created a comprehensive and user-friendly Arimaa game implementation in Java.
-Javadoc for the entire code documentation is to be found here:
-### 2.4 Technologies and Features
+### 2.4 Architecture Design
+The architecture of the Arimaa GUI Java Application demonstrates a thoughtful separation of concerns between logic and design. By primarily utilizing communication through the board panel and game controls, the application effectively maintains a distinction between its core gameplay logic and user interface components. This approach allows for increased modularity, ease of maintenance, and adaptability to future changes or enhancements. The application's well-structured design patterns contribute to its overall efficient performance, making it an exemplary implementation of good software architecture principles.
+### 2.5 Technologies and Features
 By combining several of the following technologies, features, frameworks, and utilities, I've created a well-rounded, approachable, and detailed implementation of the Arimaa game in Java.
 #### Object-Oriented Programming (OOP)
 I've utilized the core concepts of OOP throughout the implementation, allowing for a modular and maintainable code structure. Key OOP concepts used include:
@@ -99,17 +101,35 @@ I've used various Java utility classes to handle data structures and other opera
 - `ArrayList`: Used to manage lists of game elements, such as positions and directions.
 - Other utility methods for operations such as converting an `ArrayList` to an array or obtaining valid adjacent positions.
 ## 3. User Manual
+We'll demonstrate the functionality of the application by executing the following process:
+1. Start the application
+2. Start a new multiplayer game
+3. Set up the initial positions
+4. Play a few moves
+5. Save the game
+6. Start a continuing game loaded from a file
+7. Discover more game options for winning/ending
+8. Save the game
+9. Replay steps of the game loaded from a file
+10. Introduce single-player (against computer) mode
+### Start the application
+When you start the program, you are greeted with the following screen, outlining basic Arimaa game rules. From here you can use the menu bar at the top to initiate actions.
 ![](user-manual-pictures/1.png)
+### Start a new multiplayer game
+Navigate to `Start a new game` > `Multiplayer`
 ![](user-manual-pictures/2.png)
-
-
-
+Enter the players' names
 ![](user-manual-pictures/6.png)
-
+### Set up the initial positions
+Your new game and board is now prefilled with initial piece positions. At the top in blue you can see Player 2 info, at the bottom in yellow you can see the Player 1 info. The yellow color of the panel as well as 'Player 1's turn' indicate that it's Matt's turn. Before the game starts, both players have the option to set up their inital positions within the first two home rows. Let's click SWITCH to do that.
 ![](user-manual-pictures/8.png)
+White squares in the game always indicate positions you can currently click at (in order to select them and act upon them). The SWITCH indicates that you are now in switch mode, meaning you can edit your initial positions by switching positions of two of your pieces at a time. Yuo are free to do as many switches as you'd like, as the game has not officially started yet. Let's select elephant at A2.
 ![](user-manual-pictures/9.png)
+The selected piece becomes green. Again, the white positions are positions you can click at. Shall you select any other square color, your action will be resetted. Let's select the rabbit at B1 to complete the switch.
 ![](user-manual-pictures/10.png)
+As you can see, both pieces we selected switched their positions. All pieces are white again, as we are in SWITCH mode. You're free to make other switches, and once you're satisfied with your initial positions, click the finished button.
 ![](user-manual-pictures/11.png)
+The finished button is a way of saying, ""
 ![](user-manual-pictures/12.png)
 ![](user-manual-pictures/13.png)
 ![](user-manual-pictures/14.png)
