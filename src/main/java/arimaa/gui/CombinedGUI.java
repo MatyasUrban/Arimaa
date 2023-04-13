@@ -78,7 +78,15 @@ public class CombinedGUI {
             player2TextField.setEditable(false);
         }
         JButton startGameButton = new JButton("Start game");
+        // Action listener fot the start button
+        startGameButton.addActionListener(e -> {
+            System.out.println("hey");
+            newGameDialog.dispose();
+            String player1Name = player1TextField.getText().replaceAll("\\s", "");
+            String player2Name = player2TextField.getText().replaceAll("\\s", "");
+            startNewGame(player1Name, player2Name, vsComputer);
 
+        });
         // Lay the components out
         c.gridx = 0;
         c.gridy = 0;
@@ -98,14 +106,6 @@ public class CombinedGUI {
         newGameDialog.pack();
         newGameDialog.setLocationRelativeTo(parentFrame);
         newGameDialog.setVisible(true);
-
-        // Action listener fot the start button
-        startGameButton.addActionListener(e -> {
-            String player1Name = player1TextField.getText().replaceAll("\\s", "");
-            String player2Name = player2TextField.getText().replaceAll("\\s", "");
-            startNewGame(player1Name, player2Name, vsComputer);
-            newGameDialog.dispose();
-        });
     }
 
     /**
@@ -259,6 +259,7 @@ public class CombinedGUI {
                         game.setGamePhase(Character.getNumericValue(turn.charAt(0))*2-1);
                     }
                     // Append the log to the new game so that it starts logging right where it left off
+                    game.appendStepsBuilder("\n");
                     for (String line : moveLinesArrayList){
                         game.appendStepsBuilder("\n"+line);
                     }
