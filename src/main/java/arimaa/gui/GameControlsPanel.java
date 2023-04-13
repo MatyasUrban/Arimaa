@@ -14,6 +14,9 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+/**
+ * The GameControlsPanel displays information about current turn and controls for individual moves while facilitating interaction between board, game, labeledboardpanel, and gamelistener.
+ */
 public class GameControlsPanel extends JPanel implements GameListener {
 
     /**

@@ -14,6 +14,9 @@ import arimaa.core.StepMove;
 import arimaa.utils.Direction;
 import arimaa.utils.Position;
 
+/**
+ * The HistoryPanel facilitates reading game log and displaying it onto the board as user brows the game history by clicking previous/next move.
+ */
 public class HistoryPanel extends JPanel {
 
     /**
