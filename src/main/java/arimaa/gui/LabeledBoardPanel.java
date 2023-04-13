@@ -8,10 +8,20 @@ import java.awt.*;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
+/**
+ * The LabeledBoardPanel class represents the game board extended with row and column labels and facilitate communication between game board and side panel.
+ */
 class LabeledBoardPanel extends JPanel {
+    /**
+     * Instance variable: the visual game board panel
+     */
+    private final BoardPanel boardPanel;
 
-    private BoardPanel boardPanel;
-
+    /**
+     * Constructs a new LabeledBoardPanel
+     *
+     * @param game Game whose state will the game board visualize
+     */
     public LabeledBoardPanel(Game game) {
         setLayout(new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
@@ -39,11 +49,11 @@ class LabeledBoardPanel extends JPanel {
         add(createColumnLabels(), constraints);
     }
 
-    public JPanel getBoardPanel(){
-        return boardPanel;
-    }
-
-
+    /**
+     * Method to create row labels for our visual game board.
+     *
+     * @return JPanel with row labels.
+     */
     private JPanel createRowLabels() {
         JPanel rowLabelsPanel = new JPanel(new GridLayout(8, 1));
         for (int i = 8; i >= 1; i--) {
@@ -56,7 +66,11 @@ class LabeledBoardPanel extends JPanel {
         return rowLabelsPanel;
     }
 
-
+    /**
+     * Method to create column labels for our visual game board.
+     *
+     * @return JPanel with column labels.
+     */
     private JPanel createColumnLabels() {
         JPanel columnLabelsPanel = new JPanel(new GridLayout(1, 8));
         char[] columns = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'};
@@ -68,19 +82,6 @@ class LabeledBoardPanel extends JPanel {
             columnLabelsPanel.add(columnLabel);
         }
         return columnLabelsPanel;
-    }
-
-//    public void resetBoardToDefault(){
-//        boardPanel.resetBoardToDefault();
-//    }
-
-    public void setBoard(Board board){
-        boardPanel.setBoard(board);
-
-    }
-
-    public void emptyTheBoard() {
-        boardPanel.emptyTheBoard();
     }
 
     public void placePieceAt(Piece piece, Position position){
@@ -95,35 +96,9 @@ class LabeledBoardPanel extends JPanel {
         boardPanel.movePiece(stepMove);
     }
 
-    public void fillSquareWithColor(Position position, Color color){
-        boardPanel.fillSquareWithColor(position, color);
+    public void setBoardMode(BoardMode boardMode){
+        boardPanel.setBoardMode(boardMode);
     }
-
-    public void fillSquaresWithColor(ArrayList<Position> positions, Color color){
-        boardPanel.fillSquaresWithColor(positions, color);
-    }
-
-    public void fillSquareWithBoard(){
-        boardPanel.fillSquaresWithBoard();
-    }
-
-    public Position getPositionBySquare(JPanel sqaure){
-        return boardPanel.getPositionFromSquare(sqaure);
-    }
-
-    public void addMouseListenerToSquares(MouseListener mouseListener){
-        boardPanel.addMouseListenerToSquares(mouseListener);
-    }
-
-    public void switchPiecesMode(Game game, Player player, Runnable onFinish){
-        boardPanel.switchPiecesMode(game, player, onFinish);
-    }
-
-    public JPanel[][] getSquares(){
-        return boardPanel.getSquares();
-    }
-
-    public void setBoardMode(BoardMode boardMode){boardPanel.setBoardMode(boardMode);}
 
     public void resetSquaresColors(){
         boardPanel.resetSquaresColors();
@@ -135,6 +110,14 @@ class LabeledBoardPanel extends JPanel {
 
     public void handleModeReset(){
         boardPanel.handleModeReset();
+    }
+
+    public ArrayList<Position> getPositionsOfSquaresWithColor(Color color) {
+        return boardPanel.getPositionsOfSquaresWithColor(color);
+    }
+
+    public void clickOnRandomWhiteSquare(){
+        boardPanel.clickOnRandomWhiteSquare();
     }
 
 }

@@ -82,6 +82,11 @@ public abstract class Move {
         }
     }
 
+    /**
+     * Method to get the string representation of the Move per arimaa notation.
+     *
+     * @return The string representation of the Move.
+     */
     @Override
     public String toString(){
         return from + getDirection().getNotation();

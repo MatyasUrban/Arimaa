@@ -13,6 +13,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 /**
@@ -24,34 +25,32 @@ class BoardPanel extends JPanel {
      * Static constant: Board size (useful for generating UI)
      */
     private static final int GRID_SIZE = Board.BOARD_SIZE;
-
-
-
-    private Game game;
     /**
-     * Instance variable: Actual logical game board object with pieces and methods.
+     * Instance variable: Game whose state this board panel will visualize.
      */
-    private Board board;
+    private Game game;
 
     /**
      * Instance variable: Panel of interactive visual board positions.
      */
     private final JPanel[][] squares;
 
+    /**
+     * Instance variable: Mode of interactivity with the board panel.
+     */
     private BoardMode currentMode = BoardMode.NONE;
 
 
     /**
-     * Constructs a visual BoardPanel object representing the logical board.
+     * Constructs a new visual BoardPanel object representing the logical board.
      *
-     * @param board Board object Position[][] filled with Piece objects and nulls.
+     * @param game Game whose state is to be visualized.
      */
     public BoardPanel(Game game) {
         this.game = game;
-        this.board = this.game.getBoard();
         squares = new JPanel[GRID_SIZE][GRID_SIZE];
         setLayout(new GridLayout(GRID_SIZE, GRID_SIZE));
-        // Create the grid
+        // Create the grid with mouse listeners attached to each square.
         int tileSize = 70;
         MouseAdapter mouseAdapter = createMouseAdapter();
         for (int i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
@@ -75,22 +74,21 @@ class BoardPanel extends JPanel {
     }
 
     /**
-     * Sets the logical board, which the BoardPanel shall represent, and displays it accordingly.
+     * Sets the current game and updates the visual board.
      *
-     * @param board Board object of the logical game board.
+     * @param game Game object.
      */
-    public void setBoard(Board board){
-        this.board = board;
-        fillSquaresWithBoard();
-        resetSquaresColors();
-    }
-
     public void setGame(Game game){
         this.game = game;
         fillSquaresWithBoard();
         resetSquaresColors();
     }
 
+    /**
+     * Sets the board mode of interactivity with the visual board panel.
+     *
+     * @param boardMode Enum board mode.
+     */
     public void setBoardMode(BoardMode boardMode){
         this.currentMode = boardMode;
     }
@@ -163,6 +161,10 @@ class BoardPanel extends JPanel {
         resetSquaresColors();
     }
 
+    /*
+    SIMPLE MOVING AND REMOVING FOR STEPS HISTORY FACILITATED BY HISTORY PANEL
+     */
+
     /**
      * Method to remove a piece from the board (both visual and logical)
      *
@@ -174,35 +176,39 @@ class BoardPanel extends JPanel {
         resetSquaresColors();
     }
 
-    public void removeMovePiece(StepMove stepMove){
-        String moveString = game.getBoard().getPieceAt(stepMove.getFrom()).toString() + stepMove + " ";
-        System.out.print(moveString);
-        game.appendStepsBuilder(moveString);
-        game.getBoard().removePieceAt(stepMove.getTo());
-        fillSquaresWithBoard();
-        resetSquaresColors();
-    }
-
     /**
-     * Method to move a piece on the board (both visually and logically.
+     * Method to move a piece on the board (both visual and logical)
      *
-     * @param stepMove StepMove object with specified starting and destination positions.
+     * @param stepMove StepMove object.
      */
-    public void stepMovePiece(StepMove stepMove){
-        String moveString = game.getBoard().getPieceAt(stepMove.getFrom()).toString() + stepMove + " ";
-        System.out.print(moveString);
-        game.appendStepsBuilder(moveString);
-        game.getBoard().makeMove(stepMove);
-        fillSquaresWithBoard();
-        resetSquaresColors();
-    }
-
     public void movePiece(StepMove stepMove){
         game.getBoard().makeMove(stepMove);
         fillSquaresWithBoard();
         resetSquaresColors();
     }
 
+    /*
+    COMPLEX MOVES FOR GAME INTERACTIVITY
+     */
+
+    /**
+     * Method to move a piece on the board (both visually and logically).
+     *
+     * @param stepMove StepMove object with specified starting and destination positions.
+     */
+    public void stepMovePiece(StepMove stepMove){
+        String moveString = game.getBoard().getPieceAt(stepMove.getFrom()).toString() + stepMove + " ";
+        game.appendStepsBuilder(moveString);
+        game.getBoard().makeMove(stepMove);
+        fillSquaresWithBoard();
+        resetSquaresColors();
+    }
+
+    /**
+     * Method to facilitate a pull move by destructuring it into step moves and checking traps in between.
+     *
+     * @param pullMove PullMove object.
+     */
     public void pullMovePieces(PullMove pullMove){
         StepMove pullingPieceMove = new StepMove(pullMove.getFrom(), pullMove.getTo());
         stepMovePiece(pullingPieceMove);
@@ -211,6 +217,11 @@ class BoardPanel extends JPanel {
         stepMovePiece(pulledPieceMove);
     }
 
+    /**
+     * Method to facilitate a push move by destructuring it into step moves and checking traps in between.
+     *
+     * @param pushMove PullMove object.
+     */
     public void pushMovePieces(PushMove pushMove){
         StepMove pushedPieceMove = new StepMove(pushMove.getPushedPieceFrom(), pushMove.getPushedPieceTo());
         stepMovePiece(pushedPieceMove);
@@ -248,7 +259,7 @@ class BoardPanel extends JPanel {
     }
 
     /**
-     * Method to fill a specific grid square with given color.
+     * Method to fill a specific grid square with a given color.
      *
      * @param position Position of the square to be filled.
      * @param color Color of the new filling.
@@ -261,7 +272,7 @@ class BoardPanel extends JPanel {
     }
 
     /**
-     * Method to fill specific positions with specific color.
+     * Method to fill specific positions with a given color.
      *
      * @param positions List of positions which shall be filled.
      * @param color Color to be used.
@@ -272,6 +283,12 @@ class BoardPanel extends JPanel {
         }
     }
 
+    /**
+     * Method to get coordinates of squares with a given color.
+     *
+     * @param color Color of the search.
+     * @return ArrayList of Position objects.
+     */
     public ArrayList<Position> getPositionsOfSquaresWithColor(Color color){
         ArrayList<Position> positionArrayList = new ArrayList<>();
         for (int i = 0; i < GRID_SIZE; i++) {
@@ -294,6 +311,12 @@ class BoardPanel extends JPanel {
         resetSquaresColors();
     }
 
+    /**
+     * Method to create a position object (coordinates) given a board square.
+     *
+     * @param square Specific square in the grid.
+     * @return Position object.
+     */
     public Position getPositionFromSquare(JPanel square) {
         for (int row = 0; row < GRID_SIZE; row++) {
             for (int col = 0; col < GRID_SIZE; col++) {
@@ -305,56 +328,11 @@ class BoardPanel extends JPanel {
         return null;
     }
 
-    public void addMouseListenerToSquares(MouseListener listener) {
-        for (int row = 0; row < GRID_SIZE; row++) {
-            for (int col = 0; col < GRID_SIZE; col++) {
-                squares[row][col].addMouseListener(listener);
-            }
-        }
-    }
-
-    public JPanel[][] getSquares(){
-        return squares;
-    }
-
-    public void switchPiecesMode(Game game, Player player, Runnable onFinish) {
-        ArrayList<Position> playerPiecePositions = game.getBoard().getPositionsOfPlayersPieces(player);
-        fillSquaresWithColor(playerPiecePositions, Color.WHITE);
-
-        MouseAdapter mouseAdapter = new MouseAdapter() {
-            Position selectedPosition = null;
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                JPanel square = (JPanel) e.getSource();
-                Position clickedPosition = getPositionFromSquare(square);
-                Color squareColor = square.getBackground();
-
-                if (selectedPosition == null) {
-                    if (playerPiecePositions.contains(clickedPosition)) {
-                        selectedPosition = clickedPosition;
-                        fillSquareWithColor(clickedPosition, Color.RED);
-                    }
-                } else {
-                    if (playerPiecePositions.contains(clickedPosition) && !clickedPosition.equals(selectedPosition)) {
-                        switchPieces(selectedPosition, clickedPosition);
-                        fillSquaresWithColor(playerPiecePositions, Color.WHITE);
-                        selectedPosition = null;
-                    } else {
-                        fillSquaresWithColor(playerPiecePositions, Color.WHITE);
-                        selectedPosition = null;
-                    }
-                }
-            }
-        };
-
-        for (Position position : playerPiecePositions) {
-            squares[position.row()][position.column()].addMouseListener(mouseAdapter);
-        }
-
-        onFinish.run();
-    }
-
+    /**
+     * Creates mouse adapter and describes behavior on square click depending on the current mode.
+     *
+     * @return The mouse adapter object.
+     */
     private MouseAdapter createMouseAdapter() {
         return new MouseAdapter() {
 
@@ -368,29 +346,43 @@ class BoardPanel extends JPanel {
                 }
                 ArrayList<Position> positionArrayList = getPositionsOfSquaresWithColor(currentMode.getColor());
                 switch (currentMode) {
-                    case SWITCH:
-                        handleSwitchMode(clickedPosition, positionArrayList);
-                        break;
-                    case STEP:
+                    case SWITCH -> handleSwitchMode(clickedPosition, positionArrayList);
+                    case STEP -> {
                         if (game.getMovesLeftThisTurn() < 1) break;
                         handleStepMode(clickedPosition, positionArrayList);
-                        break;
-                    case PULL:
+                    }
+                    case PULL -> {
                         if (game.getMovesLeftThisTurn() < 2) break;
                         handlePullMode(clickedPosition, positionArrayList);
-                        break;
-                    case PUSH:
+                    }
+                    case PUSH -> {
                         if (game.getMovesLeftThisTurn() < 2) break;
                         handlePushMode(clickedPosition, positionArrayList);
-                        break;
-                    default:
-                        break;
+                    }
                 }
             }
         };
     }
 
+    /**
+     * Method to determine, whether the clicked square color is wrong (the square is not available for click or has been already selected).
+     *
+     * @param square The clicked square.
+     * @return Boolean value of the check.
+     */
+    private boolean clickedOnWrongSquare(JPanel square){
+        Color color = square.getBackground();
+        return color == Color.LIGHT_GRAY || color == Color.DARK_GRAY || color == currentMode.getColor();
+    }
 
+    /**
+     * Method to handle switch mode (setting up the initial positions of pieces)
+     * 1. If no piece already selected, the clicked position will be the first of two chosen squares for switch
+     * 2. If one piece already selected, the clicked position will be the second piece, execute switch
+     *
+     * @param squarePosition Position of the currently clicked square.
+     * @param selectedPositions List of already selected (user-clicked) and active positions on the board.
+     */
     private void handleSwitchMode(Position squarePosition, ArrayList<Position> selectedPositions){
         if (selectedPositions.size() == 0) {
             fillSquareWithColor(squarePosition, currentMode.getColor());
@@ -400,11 +392,17 @@ class BoardPanel extends JPanel {
         }
     }
 
-    private boolean clickedOnWrongSquare(JPanel square){
-        Color color = square.getBackground();
-        return color == Color.LIGHT_GRAY || color == Color.DARK_GRAY || color == currentMode.getColor();
-    }
 
+
+    /**
+     * Method to handle step mode (user indicated they want to make a step move)
+     * 1. If no piece already selected, the clicked position will be the piece we'd like to move by one place
+     * 2. If piece selected, the clicked position will be the destination of the step move
+     * Finally: Execute step move, check traps, check winning, decrement moves
+     *
+     * @param squarePosition Position of the currently clicked square.
+     * @param selectedPositions List of already selected (user-clicked) and active positions on the board.
+     */
     private void handleStepMode(Position squarePosition, ArrayList<Position> selectedPositions){
         if (selectedPositions.size() == 0){
             resetSquaresColors();
@@ -419,6 +417,16 @@ class BoardPanel extends JPanel {
         }
     }
 
+    /**
+     * Method to handle the pull mode (user indicated they want to make a pull move)
+     * 1. If none already selected, the clicked position will be the piece we'd like to pull, and display pulling pieces options
+     * 2. If pulled piece selected, the clicked position will be the pulling piece, and display destination options
+     * 3. If pulled and pulling pieces selected, the clicked position will be the chosen direction of the pull
+     * Finally: Execute pull move, check traps, check winning, decrement moves
+     *
+     * @param squarePosition Position of the currently clicked square.
+     * @param selectedPositions List of already selected (user-clicked) and active positions on the board.
+     */
     private void handlePullMode(Position squarePosition, ArrayList<Position> selectedPositions){
         if (selectedPositions.size() == 0){
             resetSquaresColors();
@@ -447,6 +455,16 @@ class BoardPanel extends JPanel {
         }
     }
 
+    /**
+     * Method to handle the push mode (user indicated they want to make a push move)
+     * 1. If none already selected, the clicked position will be the piece we'd like to push, and display pushing pieces options
+     * 2. If pushed piece selected, the clicked position will be the pushing piece, and display destination options
+     * 3. If pushed and pushing pieces selected, the clicked position will be the chosen direction of the push
+     * Finally: Execute push move, check traps, check winning, decrement moves
+     *
+     * @param squarePosition Position of the currently clicked square.
+     * @param selectedPositions List of already selected (user-clicked) and active positions on the board.
+     */
     private void handlePushMode(Position squarePosition, ArrayList<Position> selectedPositions){
         if (selectedPositions.size() == 0){
             resetSquaresColors();
@@ -475,6 +493,9 @@ class BoardPanel extends JPanel {
         }
     }
 
+    /**
+     * Method to reset the board colors based on the current mode of interactivity.
+     */
     public void handleModeReset(){
         resetSquaresColors();
         switch (currentMode){
@@ -485,6 +506,10 @@ class BoardPanel extends JPanel {
         }
     }
 
+    /**
+     * Method to remove pieces from traps.
+     * stepMovePiece is used for logging (moving onto the same square signifies a removal).
+     */
     private void checkTraps(){
         for(Position position : Position.TRAP_POSITIONS){
             if (game.getBoard().getPieceAt(position) != null && !game.getBoard().isFriendlyPieceNearby(position)){
@@ -493,6 +518,21 @@ class BoardPanel extends JPanel {
             }
         }
     }
+
+    /**
+     * Method for the computer mode to select random square with valid move and click it.
+     */
+    public void clickOnRandomWhiteSquare() {
+        ArrayList<Position> positions = getPositionsOfSquaresWithColor(Color.WHITE);
+        Random random = new Random();
+        Position position = positions.get(random.nextInt(positions.size()));
+        JPanel square = squares[position.row()][position.column()];
+        MouseEvent event = new MouseEvent(square, MouseEvent.MOUSE_CLICKED, System.currentTimeMillis(), 0, 1,1, 1, false);
+        for (MouseListener listener : square.getMouseListeners()) {
+            listener.mouseClicked(event);
+        }
+    }
+
 
 
 

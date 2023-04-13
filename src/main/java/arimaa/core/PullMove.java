@@ -48,6 +48,11 @@ public class PullMove extends Move {
         return pulledPieceTo;
     }
 
+    /**
+     * Method to get the Direction of the pulled piece (since PushMove.getDirection is of the pulling piece).
+     *
+     * @return The direction of the pulled piece.
+     */
     public Direction getPulledPieceDirection(){
         int rowDiff = pulledPieceTo.row() - pulledPieceFrom.row();
         int columnDiff = pulledPieceTo.column() - pulledPieceFrom.column();

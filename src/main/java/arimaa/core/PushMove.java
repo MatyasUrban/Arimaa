@@ -48,6 +48,11 @@ public class PushMove extends Move {
         return pushedPieceTo;
     }
 
+    /**
+     * Method to get the Direction of the pushed piece (since PushMove.getDirection is of the pushing piece).
+     *
+     * @return The direction of the pushed piece.
+     */
     public Direction getPushedPieceDirection(){
         int rowDiff = pushedPieceTo.row() - pushedPieceFrom.row();
         int columnDiff = pushedPieceTo.column() - pushedPieceFrom.column();

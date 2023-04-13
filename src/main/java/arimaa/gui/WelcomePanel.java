@@ -3,8 +3,14 @@ package arimaa.gui;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * The WelcomePanel class represents a basic welcome panel with overview of the Arimaa rules.
+ */
 public class WelcomePanel extends JPanel {
-    private final String rules = """
+    /**
+     * Class constant: Arimaa rules overview
+     */
+    private final static String RULES = """
             # COLORS
  
             - Player 1 (g) has yellow pieces
@@ -40,12 +46,16 @@ public class WelcomePanel extends JPanel {
             - Enemy cannot move
             
             """;
+
+    /**
+     * Constructs a new WelcomePanel.
+     */
     public WelcomePanel() {
         setLayout(new BorderLayout());
         JLabel welcomeLabel = new JLabel(" Welcome to Arimaa! ", SwingConstants.CENTER);
         welcomeLabel.setFont(new Font("Arial", Font.BOLD, 24));
         add(welcomeLabel, BorderLayout.NORTH);
-        JTextArea longText = new JTextArea(rules);
+        JTextArea longText = new JTextArea(RULES);
         longText.setLineWrap(false);
         longText.setWrapStyleWord(true);
         longText.setEditable(false);

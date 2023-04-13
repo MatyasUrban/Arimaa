@@ -76,4 +76,5 @@ public enum PieceType{
     public String toString(){
         return String.valueOf(this.notation);
     }
+
 }

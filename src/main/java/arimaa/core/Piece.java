@@ -92,6 +92,11 @@ public record Piece(PieceType type, Player owner) {
         return new Piece(pieceType, player);
     }
 
+    /**
+     * String notation of the Piece (D for gold dog, d for silver dog)
+     *
+     * @return String notation of the Piece.
+     */
     @Override
     public String toString(){
         if (owner.getColor() == Color.GOLD){

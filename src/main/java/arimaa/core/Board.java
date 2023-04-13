@@ -19,7 +19,7 @@ public class Board {
      */
     public static final int BOARD_SIZE = 8;
     /*
-    Instance constant variable: 2D array of Piece objects
+    Instance variable: 2D array of Piece objects
      */
     private final Piece[][] board;
 
@@ -118,7 +118,7 @@ public class Board {
     /**
      * Method to facilitate a PushMove (Moving pushed piece and pushing piece moves into pushed piece's original position)
      *
-     * @param move PushMove object with the old and new positions of both pieces)
+     * @param move PushMove object with the old and new positions of both pieces.
      */
     private void makePushMove(PushMove move) {
         StepMove pushingPieceMove = new StepMove(move.getFrom(), move.getTo());

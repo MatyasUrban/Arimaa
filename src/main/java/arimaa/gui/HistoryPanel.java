@@ -175,6 +175,13 @@ public class HistoryPanel extends JPanel {
         }
     }
 
+    /**
+     * Method to read 3-letter move notation in Arimaa and insert a piece into the board.
+     *
+     * @param start Starting index of the notation.
+     * @param end Ending index of the notation.
+     * @param shouldBeInverse Boolean whether the move should be inversed (step back).
+     */
     private void readPositionAndApply(int start, int end, boolean shouldBeInverse){
         // extract info (Ra7 - place Gold rabbit on position a7)
         String pieceString = longText.getText().substring(start, start + 1);
@@ -189,6 +196,13 @@ public class HistoryPanel extends JPanel {
         }
     }
 
+    /**
+     * Method to read 4-letter move notation in Arimaa and move piece on the board or remove it.
+     *
+     * @param start Starting index of the notation.
+     * @param end Edning index of the notation.
+     * @param shouldBeInverse Boolean whether the move should be inversed (step back).
+     */
     private void readMoveAndApply(int start, int end, boolean shouldBeInverse){
         // extract info (Rc3x - remove gold rabbit from trap at position c3)
         String pieceString = longText.getText().substring(start, start + 1);
