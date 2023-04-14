@@ -205,13 +205,12 @@ public class CombinedGUI {
                             } else if (lineNumber > 6){
                                 moveLinesArrayList.add(line);
                                 // if line has actual moves, add them for later processing
-                                if (line.length() > 3) {
-                                    List<String> tentativeMoves = new ArrayList<>(List.of(line.substring(3).trim().replaceAll("[\n]+$", "").split(" ")));
-                                    if (tentativeMoves.size()>1){
-                                        tentativeMoves.remove(0);
-                                        movesArrayList.addAll(tentativeMoves);
-                                    }
+                                List<String> tentativeMoves = new ArrayList<>(List.of(line.replaceAll("[\n]+$", "").replaceAll("resigns", "").split(" ")));
+                                if (tentativeMoves.size()>1){
+                                    tentativeMoves.remove(0);
+                                    movesArrayList.addAll(tentativeMoves);
                                 }
+
                             }
                         }
                         if (result.equals("1-0") || result.equals("0-1")){

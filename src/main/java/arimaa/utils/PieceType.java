@@ -1,7 +1,7 @@
 package arimaa.utils;
 
 /**
- * Enum representing piece type in the Arimaa game.
+ * The PieceType enum represents a piece type in the Arimaa game.
  */
 public enum PieceType{
     RABBIT('r', "rabbit"),
