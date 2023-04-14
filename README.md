@@ -10,15 +10,15 @@ Designed, developed and programmed by  [Matyas Urban](https://www.linkedin.com/i
 - [ ] Unit testing
 
 ## Contents of This README
-1. [Project Overview](#project-overview)
+1. [Project Overview](#1-project-overview)
    1. [About Arimaa](#11-about-arimaa)
-2. [Technical Documentation](#technical-documentation)
+2. [Technical Documentation](#2-technical-implementation)
    1. [Javadoc](#21-javadoc)
    2. [Application Structure](#22-application-structure)
    3. [Problem Approach](#23-problem-approach)
    4. [Architecture Design](#24-architecture-design)
    5. [Technologies and Features](#25-technologies-and-features)
-3. [User Manual](#user-manual)
+3. [User Manual](#3-user-manual)
    1. [Open the application](#31-open-the-application)
    2. [Start a new multiplayer game](#32-start-a-new-multiplayer-game)
    3. [Set up the initial positions](#33-set-up-the-initial-positions)
