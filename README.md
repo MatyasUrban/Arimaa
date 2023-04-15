@@ -31,7 +31,7 @@ Designed, developed and programmed by  [Matyas Urban](https://www.linkedin.com/i
    10. [Play against the computer](#310-play-against-the-computer)
 
 ## 1. Project Overview
-![](user-manual-pictures/22.png)
+![](user-manual-pictures/18.png)
 This project implements [the Arimaa game](http://arimaa.com/arimaa/) in Java including all the game rules, graphical user interface, modes for single-player/multiplayer, logging the game history using the official Arimaa notation and viewing individual steps taken and backtracking them, as well as enabling user to continue playing a game after some time without losing the state of the game, as per course requirements.
 ### 1.1 About Arimaa
 Arimaa is a strategic two-player board game that was designed to be more challenging for artificial intelligence to solve than traditional board games, such as chess. It was invented in 2003 by Omar Syed and has gained popularity due to its simple rules and deep strategy.
