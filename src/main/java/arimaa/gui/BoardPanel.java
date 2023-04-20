@@ -411,9 +411,11 @@ class BoardPanel extends JPanel {
         } else if (selectedPositions.size() == 1){
             stepMovePiece(new StepMove(selectedPositions.get(0), squarePosition));
             checkTraps();
-            handleModeReset();
             game.checkWinning();
-            game.decrementMovesLeftThisTurnBy(1);
+            if (!game.getGameEnded()){
+                handleModeReset();
+                game.decrementMovesLeftThisTurnBy(1);
+            }
         }
     }
 
@@ -449,9 +451,11 @@ class BoardPanel extends JPanel {
             }
             pullMovePieces(new PullMove(pullingPiecePosition, squarePosition, pulledPiecePosition, pullingPiecePosition));
             checkTraps();
-            handleModeReset();
             game.checkWinning();
-            game.decrementMovesLeftThisTurnBy(2);
+            if (!game.getGameEnded()){
+                handleModeReset();
+                game.decrementMovesLeftThisTurnBy(2);
+            }
         }
     }
 
@@ -487,9 +491,11 @@ class BoardPanel extends JPanel {
             }
             pushMovePieces(new PushMove(pushingPiecePosition, pushedPiecePosition, pushedPiecePosition, squarePosition));
             checkTraps();
-            handleModeReset();
             game.checkWinning();
-            game.decrementMovesLeftThisTurnBy(2);
+            if (!game.getGameEnded()){
+                handleModeReset();
+                game.decrementMovesLeftThisTurnBy(2);
+            }
         }
     }
 
