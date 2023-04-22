@@ -4,11 +4,6 @@ This is my semester project in *Programming in Java*  [B0B36PJV](https://bilakni
 
 Designed, developed and programmed by  [Matyas Urban](https://www.linkedin.com/in/matyasurban/)  in Spring 2023.
 
-**To be done (project is still in development):**
-- [ ] Random computer considering push and pull moves
-- [ ] User testing
-- [ ] Unit testing
-
 ## Contents of This README
 1. [Project Overview](#1-project-overview)
    1. [About Arimaa](#11-about-arimaa)
