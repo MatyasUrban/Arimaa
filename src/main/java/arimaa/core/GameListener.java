@@ -1,7 +1,7 @@
 package arimaa.core;
 
 /**
- * GameListener interface to communicate Game -> GameControlsPanel
+ * The GameListener interface to communicate Game -> GameControlsPanel
  */
 public interface GameListener {
 

@@ -157,12 +157,23 @@ public class Board {
         }
         // 2. Enemy lost all of their rabbits.
         ArrayList<Position> enemyPiecesPositions = getPositionsOfPlayersPieces(enemy);
+        int enemyRabbitsCount = 0;
         for (Position position : enemyPiecesPositions){
             if (getPieceAt(position).type() == PieceType.RABBIT){
-                return false;
+                enemyRabbitsCount++;
             }
         }
-        return true;
+        if (enemyRabbitsCount == 0){
+            return true;
+        }
+
+        // 3. Player immobilized all enemy pieces
+        int enemyPositions = enemyPiecesPositions.size();
+        int frozenEnemyPiecePositions = 0;
+        for (Position position : enemyPiecesPositions){
+            frozenEnemyPiecePositions += isPositionFrozen(position) ? 1 : 0;
+        }
+        return enemyPositions == frozenEnemyPiecePositions;
     }
 
     /**
@@ -179,6 +190,7 @@ public class Board {
                 Position position = new Position(i, j);
                 String stringPiece = board2DString[i][j];
                 if (Objects.equals(stringPiece, "")){
+                    placePiece(null, position);
                     continue;
                 };
                 Player player = Character.isUpperCase(stringPiece.charAt(0)) ? player1 : player2;

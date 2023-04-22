@@ -114,6 +114,7 @@ Java Swing and AWT are used to build the graphical user interface. Notable compo
 #### Utilities
 I've used various Java utility classes to handle data structures and other operations:
 - `ArrayList`: Used to manage lists of game elements, such as positions and directions.
+- `HashMap`: Utilized to efficiently map and access key-value pairs, such as positions and directions.
 - Other utility methods for operations such as converting an `ArrayList` to an array or obtaining valid adjacent positions.
 ## 3. User Manual
 We'll demonstrate the functionality of the application by executing the following process:

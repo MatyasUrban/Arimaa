@@ -212,4 +212,20 @@ public record Position(int row, int column) {
         return positions;
     }
 
+    /**
+     * Method to determine if the Position instance corresponds to one of the trap positions.
+     *
+     * @return A boolean value indicating whether the position is a trap position.
+     */
+    public boolean isTrapPosition() {
+        for (Position trapPosition : TRAP_POSITIONS) {
+            if (this.equals(trapPosition)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+
 }

@@ -15,4 +15,5 @@ public class StepMove extends Move {
     public StepMove(Position from, Position to) {
         super(from, to);
     }
+
 }

@@ -1,1 +1,0 @@
-packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"arimaa.core"},{"l":"arimaa.gui"},{"l":"arimaa.utils"}];updateSearchResults();

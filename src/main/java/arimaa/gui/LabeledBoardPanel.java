@@ -116,8 +116,8 @@ class LabeledBoardPanel extends JPanel {
         return boardPanel.getPositionsOfSquaresWithColor(color);
     }
 
-    public void clickOnRandomWhiteSquare(){
-        boardPanel.clickOnRandomWhiteSquare();
+    public void clickOnRandomWhiteSquare(boolean preferTrap){
+        boardPanel.clickOnRandomWhiteSquare(preferTrap);
     }
 
 }

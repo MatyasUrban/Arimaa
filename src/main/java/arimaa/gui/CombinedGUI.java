@@ -69,10 +69,25 @@ public class CombinedGUI {
         // Player 1 field
         JLabel player1Label = new JLabel("Player 1 (Yellow):");
         JTextField player1TextField = new JTextField(20);
+        player1TextField.setDocument(new javax.swing.text.PlainDocument() {
+            public void insertString(int offs, String str, javax.swing.text.AttributeSet a) throws javax.swing.text.BadLocationException {
+                if (getLength() + str.length() <= 20 && !str.contains(" ")) {
+                    super.insertString(offs, str, a);
+                }
+            }
+        });
 
         // Player 2 field
         JLabel player2Label = new JLabel("Player 2 (Blue):");
         JTextField player2TextField = new JTextField(20);
+        player1TextField.setDocument(new javax.swing.text.PlainDocument() {
+            public void insertString(int offs, String str, javax.swing.text.AttributeSet a) throws javax.swing.text.BadLocationException {
+                if (getLength() + str.length() <= 20 && !str.contains(" ")) {
+                    super.insertString(offs, str, a);
+                }
+            }
+        });
+
         if (vsComputer) {
             player2TextField.setText("Computer");
             player2TextField.setEditable(false);
@@ -83,7 +98,9 @@ public class CombinedGUI {
             System.out.println("hey");
             newGameDialog.dispose();
             String player1Name = player1TextField.getText().replaceAll("\\s", "");
+            player1Name = player1Name.equals("Computer") || player1Name.equals("computer") ? "oneName" : player1Name;
             String player2Name = player2TextField.getText().replaceAll("\\s", "");
+            player2Name = !vsComputer && player2Name.equals("Computer") || player2Name.equals("computer") ? "twoName" : player2Name;
             startNewGame(player1Name, player2Name, vsComputer);
 
         });

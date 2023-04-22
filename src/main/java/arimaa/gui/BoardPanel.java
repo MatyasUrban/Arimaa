@@ -527,11 +527,26 @@ class BoardPanel extends JPanel {
 
     /**
      * Method for the computer mode to select random square with valid move and click it.
+     *
+     * @param preferTrap boolean indicating whether stepping on trap is preferred or otherwise
      */
-    public void clickOnRandomWhiteSquare() {
+    public void clickOnRandomWhiteSquare(boolean preferTrap) {
         ArrayList<Position> positions = getPositionsOfSquaresWithColor(Color.WHITE);
         Random random = new Random();
         Position position = positions.get(random.nextInt(positions.size()));
+        if (positions.size() > 1){
+            if (preferTrap){
+                for (Position onePosition : positions){
+                    if (onePosition.isTrapPosition()){
+                        position = onePosition;
+                    }
+                }
+            } else {
+                while (position.isTrapPosition()){
+                    position = positions.get(random.nextInt(positions.size()));
+                }
+            }
+        }
         JPanel square = squares[position.row()][position.column()];
         MouseEvent event = new MouseEvent(square, MouseEvent.MOUSE_CLICKED, System.currentTimeMillis(), 0, 1,1, 1, false);
         for (MouseListener listener : square.getMouseListeners()) {

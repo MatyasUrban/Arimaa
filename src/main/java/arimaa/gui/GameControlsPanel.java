@@ -210,7 +210,6 @@ public class GameControlsPanel extends JPanel implements GameListener {
         gameClock = new GameClock(this, game, player1time, player2time);
         if (game.getGamePhase() >= 3){
             onMovesLeftChanged(game.getMovesLeftThisTurn());
-            System.out.println("Game phase: " + game.getGamePhase());
             gameClock.start();
         }
 
@@ -220,7 +219,6 @@ public class GameControlsPanel extends JPanel implements GameListener {
             labeledBoardPanel.setBoardMode(BoardMode.NONE);
             labeledBoardPanel.handleModeReset();
             game.incrementPhase();
-            System.out.println("Game phase: " + game.getGamePhase());
             if (game.getGamePhase() == 3){
                 gameClock.start();
             }
@@ -252,16 +250,30 @@ public class GameControlsPanel extends JPanel implements GameListener {
             if (game.getGamePhase() <= 2){
                 finishedButton.doClick();
             } else {
-                // computer simulates StepMoves, selects at random, and uses all moves per turn
-                if (!stepButton.isSelected()){
-                    stepButton.doClick();
+                // computer simulates moves, selects at random, and uses all moves per turn
+                if (noneButton.isSelected()){
+                    boolean thereArePiecesToBePulled = game.getBoard().getPositionsOfEnemyPiecesWhichCanBePulled(game.getCurrentPlayer(), game.getEnemyPlayer()).size() > 0;
+                    boolean thereArePiecesToBePushed = game.getBoard().getPositionsOfEnemyPiecesThatCanBePushed(game.getCurrentPlayer(), game.getEnemyPlayer()).size() > 0;
+                    boolean thereAreEnoughStepsForPushOrPull = game.getMovesLeftThisTurn() >= 2;
+                    if (thereAreEnoughStepsForPushOrPull){
+                        if (thereArePiecesToBePulled){
+                            pullButton.doClick();
+                        } else if (thereArePiecesToBePushed) {
+                            pushButton.doClick();
+                        } else {
+                            stepButton.doClick();
+                        }
+                    } else {
+                        stepButton.doClick();
+                    }
                 } else {
                     int whiteSquaresCount = labeledBoardPanel.getPositionsOfSquaresWithColor(Color.WHITE).size();
                     if (whiteSquaresCount > 0) {
-                        labeledBoardPanel.clickOnRandomWhiteSquare();
+                        labeledBoardPanel.clickOnRandomWhiteSquare(pushButton.isSelected());
                     } else {
                         finishedButton.doClick();
                     }
+
                 }
             }
         });
