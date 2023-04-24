@@ -95,7 +95,6 @@ public class CombinedGUI {
         JButton startGameButton = new JButton("Start game");
         // Action listener fot the start button
         startGameButton.addActionListener(e -> {
-            System.out.println("hey");
             newGameDialog.dispose();
             String player1Name = player1TextField.getText().replaceAll("\\s", "");
             player1Name = player1Name.equals("Computer") || player1Name.equals("computer") ? "oneName" : player1Name;

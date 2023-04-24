@@ -284,7 +284,8 @@ public class GameControlsPanel extends JPanel implements GameListener {
         saveButton.addActionListener(e -> {
             gameClock.pauseClock();
             Date currentDate = new Date();
-            saveToFile(gameToString(currentDate), currentDate);
+            String gameText = gameToString(currentDate);
+            saveToFile(gameText, currentDate);
             if (!game.getGameEnded()){
                 gameClock.resumeClock();
             }
@@ -472,15 +473,15 @@ public class GameControlsPanel extends JPanel implements GameListener {
         String blueInfo = "Blue (s): " + game.getPlayer2().getPlayerName() + "\n";
         String blueTime = "Blue time: " + playerTopTime.getText() + "\n";
         String steps = game.getStepsBuilder().toString();
-
+        String delimiter2 = steps.startsWith("\n") ? (steps.startsWith("\n\n") ? "" : "\n") : "\n\n";
         String result;
         if (!game.getGameEnded()) {
-            result = "Result: 0-0\n";
+            result = "Result: 0-0";
         } else {
             result = game.getWinner() == game.getPlayer1() ? "Result: 1-0" : "Result: 0-1";
         }
 
-        return gameState + yellowInfo + yellowTime + blueInfo + blueTime + result + steps;
+        return gameState + yellowInfo + yellowTime + blueInfo + blueTime + result + delimiter2 + steps;
     }
 
     /**
