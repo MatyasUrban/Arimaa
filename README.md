@@ -131,6 +131,7 @@ When you start the program, you are greeted with the following screen outlining 
 ### 3.2 Start a new multiplayer game
 Navigate to `Start a new game` > `Multiplayer`
 ![](user-manual-pictures/2.png)
+
 Enter the players' names
 ![](user-manual-pictures/3.png)
 ### 3.3 Set up the initial positions
