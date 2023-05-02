@@ -1,4 +1,4 @@
-# Arimaa Desktop Application
+# Java Desktop Application | Arimaa
 
 This is my semester project in *Programming in Java*  [B0B36PJV](https://bilakniha.cvut.cz/en/predmet5010706.html#gsc.tab=0) course as part of my Software Engineering undergraduate curriculum at the Czech Technical University in Prague, CZ, EU.
 
